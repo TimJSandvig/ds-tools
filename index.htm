@@ -1,0 +1,145 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>DS Tools — Arianus Campaign</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Cinzel:wght@400;600&family=Crimson+Pro:ital,wght@0,400;0,600;1,400&display=swap');
+
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+  :root {
+    --parchment: #f5efe0;
+    --ink: #2a1a0a;
+    --ink-muted: #5c4030;
+    --red: #8b1a1a;
+    --gold: #9a7b2e;
+    --gold-light: #c9a84c;
+    --body-bg: #1a0e05;
+  }
+
+  body {
+    background: var(--body-bg);
+    background-image: repeating-linear-gradient(45deg,transparent,transparent 2px,rgba(255,255,255,0.01) 2px,rgba(255,255,255,0.01) 4px);
+    min-height: 100vh;
+    font-family: 'Crimson Pro', Georgia, serif;
+    color: var(--ink);
+    padding: 2rem 1rem;
+  }
+
+  .page {
+    max-width: 700px;
+    margin: 0 auto;
+    background: var(--parchment);
+    border-radius: 4px;
+    box-shadow: 0 8px 40px rgba(0,0,0,0.6), inset 0 0 80px rgba(154,123,46,0.08);
+    padding: 2.5rem 2rem;
+    border: 1px solid var(--gold);
+    position: relative;
+  }
+
+  .page::before {
+    content: '';
+    position: absolute;
+    inset: 8px;
+    border: 1px solid rgba(154,123,46,0.3);
+    pointer-events: none;
+    border-radius: 2px;
+  }
+
+  h1 {
+    font-family: 'Cinzel', serif;
+    font-size: clamp(1.4rem, 5vw, 2rem);
+    font-weight: 600;
+    color: var(--red);
+    text-align: center;
+    letter-spacing: 0.08em;
+    margin-bottom: 0.25rem;
+  }
+
+  .subtitle {
+    text-align: center;
+    font-style: italic;
+    color: var(--ink-muted);
+    font-size: 1rem;
+    margin-bottom: 1.5rem;
+  }
+
+  .divider {
+    border: none;
+    height: 2px;
+    background: linear-gradient(to right, transparent, var(--gold), var(--gold-light), var(--gold), transparent);
+    margin: 1.5rem 0;
+  }
+
+  .tool-list {
+    display: flex;
+    flex-direction: column;
+    gap: 0.75rem;
+  }
+
+  .tool-link {
+    display: block;
+    padding: 0.9rem 1.1rem;
+    background: rgba(154,123,46,0.06);
+    border: 1px solid var(--gold);
+    border-radius: 3px;
+    text-decoration: none;
+    color: var(--ink);
+    transition: all 0.15s;
+  }
+  .tool-link:hover, .tool-link:active {
+    background: rgba(154,123,46,0.15);
+    border-color: var(--gold-light);
+  }
+
+  .tool-name {
+    font-family: 'Cinzel', serif;
+    font-size: 1rem;
+    font-weight: 600;
+    color: var(--red);
+    letter-spacing: 0.03em;
+    display: block;
+    margin-bottom: 0.2rem;
+  }
+
+  .tool-desc {
+    font-size: 0.88rem;
+    color: var(--ink-muted);
+    font-style: italic;
+  }
+
+  .footer-note {
+    text-align: center;
+    font-size: 0.8rem;
+    color: var(--ink-muted);
+    font-style: italic;
+    margin-top: 2rem;
+  }
+</style>
+</head>
+<body>
+<div class="page">
+  <h1>DS Tools</h1>
+  <p class="subtitle">Arianus Campaign — Reference Tools</p>
+  <hr class="divider">
+
+  <div class="tool-list">
+    <a class="tool-link" href="spells_browser.html">
+      <span class="tool-name">Spell Browser</span>
+      <span class="tool-desc">All 389 PHB 2024 spells — searchable, sortable, class cross-reference</span>
+    </a>
+
+    <!-- Add more tools below as you upload them, following the same pattern:
+    <a class="tool-link" href="weapons_mastery.html">
+      <span class="tool-name">Weapons &amp; Mastery</span>
+      <span class="tool-desc">Full weapons table with mastery properties</span>
+    </a>
+    -->
+  </div>
+
+  <p class="footer-note">More tools added as they're built.</p>
+</div>
+</body>
+</html>
