@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>DS Tools — Arianus Campaign</title>
+<title>PHB 2024 Spells</title>
 <style>
   @import url('https://fonts.googleapis.com/css2?family=Cinzel:wght@400;600&family=Crimson+Pro:ital,wght@0,400;0,600;1,400&display=swap');
 
@@ -11,30 +11,54 @@
 
   :root {
     --parchment: #f5efe0;
+    --parchment-dark: #e8dcc8;
     --ink: #2a1a0a;
     --ink-muted: #5c4030;
     --red: #8b1a1a;
     --gold: #9a7b2e;
     --gold-light: #c9a84c;
+    --blue: #1a3a5c;
+    --green: #1a4a2a;
+    --purple: #3a1a5c;
+    --teal: #1a4a4a;
     --body-bg: #1a0e05;
   }
 
+  body.dark {
+    --parchment: #1c1612;
+    --parchment-dark: #252018;
+    --ink: #e8dcc8;
+    --ink-muted: #a89070;
+    --red: #c94040;
+    --gold: #c9a84c;
+    --gold-light: #e8c870;
+    --blue: #6a9ecf;
+    --green: #5aab6a;
+    --purple: #9a6acf;
+    --teal: #5aabab;
+    --body-bg: #0e0b08;
+  }
+
+  body.dark { background: var(--body-bg); }
+  body.dark .page { box-shadow: 0 8px 40px rgba(0,0,0,0.9), inset 0 0 80px rgba(154,123,46,0.04); }
+  body.dark select, body.dark input[type="text"] { color: var(--ink); }
+
   body {
-    background: var(--body-bg);
-    background-image: repeating-linear-gradient(45deg,transparent,transparent 2px,rgba(255,255,255,0.01) 2px,rgba(255,255,255,0.01) 4px);
+    background: #1a0e05;
+    background-image: repeating-linear-gradient(45deg, transparent, transparent 2px, rgba(255,255,255,0.01) 2px, rgba(255,255,255,0.01) 4px);
     min-height: 100vh;
     font-family: 'Crimson Pro', Georgia, serif;
     color: var(--ink);
-    padding: 2rem 1rem;
+    padding: 1rem 0.5rem;
   }
 
   .page {
-    max-width: 700px;
+    max-width: 1100px;
     margin: 0 auto;
     background: var(--parchment);
     border-radius: 4px;
     box-shadow: 0 8px 40px rgba(0,0,0,0.6), inset 0 0 80px rgba(154,123,46,0.08);
-    padding: 2.5rem 2rem;
+    padding: 1.5rem 1.25rem;
     border: 1px solid var(--gold);
     position: relative;
   }
@@ -48,98 +72,465 @@
     border-radius: 2px;
   }
 
+  .header-row {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 0.5rem;
+    margin-bottom: 0.25rem;
+    flex-wrap: wrap;
+  }
+  .header-row h1 { flex: 1; min-width: 0; }
+
   h1 {
     font-family: 'Cinzel', serif;
-    font-size: clamp(1.4rem, 5vw, 2rem);
+    font-size: clamp(1.2rem, 5vw, 2rem);
     font-weight: 600;
     color: var(--red);
     text-align: center;
-    letter-spacing: 0.08em;
-    margin-bottom: 0.25rem;
+    letter-spacing: 0.06em;
   }
 
   .subtitle {
     text-align: center;
     font-style: italic;
     color: var(--ink-muted);
-    font-size: 1rem;
-    margin-bottom: 1.5rem;
+    font-size: 0.9rem;
+    margin-bottom: 1.25rem;
   }
 
   .divider {
     border: none;
     height: 2px;
     background: linear-gradient(to right, transparent, var(--gold), var(--gold-light), var(--gold), transparent);
-    margin: 1.5rem 0;
+    margin: 1rem 0;
   }
 
-  .tool-list {
-    display: flex;
-    flex-direction: column;
-    gap: 0.75rem;
-  }
-
-  .tool-link {
-    display: block;
-    padding: 0.9rem 1.1rem;
-    background: rgba(154,123,46,0.06);
-    border: 1px solid var(--gold);
-    border-radius: 3px;
-    text-decoration: none;
-    color: var(--ink);
-    transition: all 0.15s;
-  }
-  .tool-link:hover, .tool-link:active {
-    background: rgba(154,123,46,0.15);
-    border-color: var(--gold-light);
-  }
-
-  .tool-name {
+  .dark-btn {
+    padding: 0.4rem 0.8rem;
+    background: transparent;
+    border: 1px solid var(--ink-muted);
+    border-radius: 2px;
     font-family: 'Cinzel', serif;
-    font-size: 1rem;
-    font-weight: 600;
-    color: var(--red);
-    letter-spacing: 0.03em;
+    font-size: 0.6rem;
+    letter-spacing: 0.06em;
+    color: var(--ink-muted);
+    cursor: pointer;
+    text-transform: uppercase;
+    white-space: nowrap;
+    transition: all 0.2s;
+  }
+  .dark-btn:hover { border-color: var(--gold); color: var(--gold); }
+
+  .controls {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 0.6rem;
+    margin-bottom: 1rem;
+  }
+
+  .control-group label {
     display: block;
-    margin-bottom: 0.2rem;
+    font-family: 'Cinzel', serif;
+    font-size: 0.62rem;
+    letter-spacing: 0.08em;
+    color: var(--gold);
+    margin-bottom: 0.3rem;
+    text-transform: uppercase;
   }
 
-  .tool-desc {
+  .control-group--wide { grid-column: 1 / -1; }
+
+  select, input[type="text"] {
+    width: 100%;
+    padding: 0.55rem 0.7rem;
+    background: var(--parchment-dark);
+    border: 1px solid var(--gold);
+    border-radius: 2px;
+    font-family: 'Crimson Pro', serif;
+    font-size: 1rem;
+    color: var(--ink);
+    appearance: none;
+    -webkit-appearance: none;
+    cursor: pointer;
+    outline: none;
+    transition: border-color 0.2s;
+  }
+  select:focus, input[type="text"]:focus {
+    border-color: var(--gold-light);
+    box-shadow: 0 0 0 2px rgba(154,123,46,0.2);
+  }
+
+  .search-wrap { position: relative; }
+  .search-wrap::after {
+    content: '✦';
+    position: absolute;
+    right: 0.75rem;
+    top: 50%;
+    transform: translateY(-50%);
+    color: var(--gold);
+    font-size: 0.75rem;
+    pointer-events: none;
+  }
+
+  .class-chips {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.35rem;
+    padding: 0.4rem;
+    background: var(--parchment-dark);
+    border: 1px solid var(--gold);
+    border-radius: 2px;
+  }
+
+  .chip {
+    padding: 0.3rem 0.6rem;
+    background: transparent;
+    border: 1px solid rgba(154,123,46,0.5);
+    border-radius: 2px;
+    font-family: 'Cinzel', serif;
+    font-size: 0.62rem;
+    letter-spacing: 0.05em;
+    color: var(--ink-muted);
+    cursor: pointer;
+    text-transform: uppercase;
+    transition: all 0.15s;
+    min-height: 2rem;
+  }
+  .chip:hover { border-color: var(--gold); color: var(--gold); }
+  .chip.active { background: var(--blue); border-color: var(--blue); color: var(--parchment); }
+
+  .mode-pill {
+    display: inline-block;
+    margin-left: 0.4rem;
+    padding: 0.1rem 0.45rem;
+    background: rgba(154,123,46,0.15);
+    border: 1px solid var(--gold);
+    border-radius: 2px;
+    font-family: 'Cinzel', serif;
+    font-size: 0.55rem;
+    letter-spacing: 0.06em;
+    color: var(--gold);
+    cursor: pointer;
+    vertical-align: middle;
+    user-select: none;
+  }
+  .mode-pill.and-mode { background: rgba(26,58,92,0.15); border-color: var(--blue); color: var(--blue); }
+
+  .comp-filter-group {
+    display: inline-flex;
+    gap: 0.25rem;
+    margin-left: 0.5rem;
+    vertical-align: middle;
+  }
+  .comp-chip {
+    padding: 0.1rem 0.5rem;
+    font-size: 0.68rem;
+    min-height: unset;
+  }
+  .comp-chip.active {
+    background: var(--gold);
+    border-color: var(--gold);
+    color: var(--parchment);
+  }
+
+  .toggle-row {
+    display: flex;
+    gap: 0.5rem;
+    margin-bottom: 1rem;
+    flex-wrap: wrap;
+  }
+
+  .toggle-btn {
+    padding: 0.5rem 0.9rem;
+    background: transparent;
+    border: 1px solid var(--ink-muted);
+    border-radius: 2px;
+    font-family: 'Cinzel', serif;
+    font-size: 0.62rem;
+    letter-spacing: 0.06em;
+    color: var(--ink-muted);
+    cursor: pointer;
+    text-transform: uppercase;
+    transition: all 0.2s;
+    flex: 1;
+    min-width: 130px;
+  }
+  .toggle-btn.active-conc { background: var(--teal); color: var(--parchment); border-color: var(--teal); }
+  .toggle-btn.active-rit { background: var(--purple); color: var(--parchment); border-color: var(--purple); }
+
+  .reset-btn {
+    width: 100%;
+    padding: 0.55rem;
+    background: transparent;
+    border: 1px solid var(--gold);
+    border-radius: 2px;
+    font-family: 'Cinzel', serif;
+    font-size: 0.65rem;
+    letter-spacing: 0.06em;
+    color: var(--gold);
+    cursor: pointer;
+    text-transform: uppercase;
+    margin-bottom: 1rem;
+  }
+  .reset-btn:active { background: var(--gold); color: var(--parchment); }
+
+  .count {
+    font-style: italic;
+    color: var(--ink-muted);
     font-size: 0.88rem;
-    color: var(--ink-muted);
-    font-style: italic;
+    margin-bottom: 0.75rem;
   }
+  .count span { color: var(--red); font-weight: 600; }
 
-  .footer-note {
-    text-align: center;
-    font-size: 0.8rem;
+  /* ── DESKTOP TABLE (default ≥701px) ── */
+  table { width: 100%; border-collapse: collapse; font-size: 0.9rem; }
+  thead tr { border-bottom: 2px solid var(--gold); }
+  th {
+    font-family: 'Cinzel', serif;
+    font-size: 0.62rem;
+    letter-spacing: 0.06em;
+    color: var(--red);
+    text-transform: uppercase;
+    padding: 0.55rem 0.5rem;
+    text-align: left;
+    cursor: pointer;
+    user-select: none;
+    white-space: nowrap;
+  }
+  th:hover { color: var(--gold); }
+  th .sort-arrow { display: inline-block; margin-left: 0.25rem; opacity: 0.4; font-size: 0.58rem; }
+  th.sorted .sort-arrow { opacity: 1; color: var(--gold-light); }
+
+  tbody tr { border-bottom: 1px solid rgba(154,123,46,0.2); }
+  tbody tr:nth-child(even) { background: rgba(154,123,46,0.04); }
+
+  td { padding: 0.45rem 0.5rem; vertical-align: top; }
+  td:first-child { font-weight: 600; color: var(--ink); }
+
+  .level-badge {
+    display: inline-block;
+    padding: 0.1rem 0.45rem;
+    border-radius: 2px;
+    font-size: 0.72rem;
+    font-family: 'Cinzel', serif;
+    letter-spacing: 0.03em;
+    white-space: nowrap;
+    background: rgba(139,26,26,0.1);
+    color: var(--red);
+    border: 1px solid rgba(139,26,26,0.3);
+  }
+  .level-badge.cantrip { background: rgba(154,123,46,0.15); color: var(--gold); border-color: var(--gold); }
+
+  .school-badge {
+    display: inline-block;
+    padding: 0.1rem 0.45rem;
+    border-radius: 2px;
+    font-size: 0.72rem;
+    font-family: 'Cinzel', serif;
+    letter-spacing: 0.03em;
+    white-space: nowrap;
+  }
+  .school-Abjuration    { background: rgba(26,58,92,0.12); color: var(--blue); border: 1px solid rgba(26,58,92,0.3); }
+  .school-Conjuration   { background: rgba(26,74,42,0.1); color: var(--green); border: 1px solid rgba(26,74,42,0.3); }
+  .school-Divination    { background: rgba(154,123,46,0.12); color: var(--gold); border: 1px solid rgba(154,123,46,0.35); }
+  .school-Enchantment   { background: rgba(139,26,26,0.1); color: var(--red); border: 1px solid rgba(139,26,26,0.3); }
+  .school-Evocation     { background: rgba(160,80,20,0.1); color: #7a3a0a; border: 1px solid rgba(160,80,20,0.3); }
+  .school-Illusion      { background: rgba(58,26,92,0.12); color: var(--purple); border: 1px solid rgba(58,26,92,0.3); }
+  .school-Necromancy    { background: rgba(20,20,20,0.1); color: #333; border: 1px solid rgba(20,20,20,0.3); }
+  .school-Transmutation { background: rgba(26,74,74,0.1); color: var(--teal); border: 1px solid rgba(26,74,74,0.3); }
+
+  .class-tags { display: flex; flex-wrap: wrap; gap: 0.2rem; }
+  .class-tag {
+    display: inline-block;
+    padding: 0.08rem 0.35rem;
+    background: var(--parchment-dark);
+    border: 1px solid rgba(154,123,46,0.4);
+    border-radius: 2px;
+    font-size: 0.7rem;
     color: var(--ink-muted);
-    font-style: italic;
-    margin-top: 2rem;
+    white-space: nowrap;
+  }
+  .class-tag.highlight { background: rgba(26,58,92,0.12); color: var(--blue); border-color: rgba(26,58,92,0.4); font-weight: 600; }
+
+  .comp-tags { display: flex; gap: 0.2rem; }
+  .comp-tag {
+    display: inline-block;
+    padding: 0.08rem 0.35rem;
+    background: var(--parchment-dark);
+    border: 1px solid rgba(154,123,46,0.4);
+    border-radius: 2px;
+    font-size: 0.7rem;
+    font-family: 'Cinzel', serif;
+    color: var(--ink-muted);
+    font-weight: 600;
+  }
+  .comp-tag.has-m { background: rgba(154,123,46,0.12); color: var(--gold); border-color: var(--gold); }
+
+  .prop-cell { color: var(--ink-muted); font-size: 0.86rem; }
+
+  .tag-conc, .tag-rit {
+    display: inline-block;
+    padding: 0.05rem 0.35rem;
+    border-radius: 2px;
+    font-size: 0.66rem;
+    font-family: 'Cinzel', serif;
+    margin-left: 0.2rem;
+  }
+  .tag-conc { background: rgba(26,74,74,0.15); color: var(--teal); border: 1px solid rgba(26,74,74,0.35); }
+  .tag-rit  { background: rgba(58,26,92,0.12); color: var(--purple); border: 1px solid rgba(58,26,92,0.3); }
+
+  .empty { text-align: center; padding: 2.5rem 1rem; color: var(--ink-muted); font-style: italic; }
+
+  /* ── MOBILE CARD LAYOUT (≤700px) ── */
+  @media (max-width: 700px) {
+    .page { padding: 1.25rem 0.9rem; }
+    .controls { grid-template-columns: 1fr; }
+
+    table { display: block; }
+    thead { display: none; }
+    tbody { display: block; }
+
+    tbody tr {
+      display: block;
+      background: rgba(154,123,46,0.04);
+      border: 1px solid rgba(154,123,46,0.25);
+      border-radius: 4px;
+      margin-bottom: 0.6rem;
+      padding: 0.6rem 0.75rem;
+    }
+    tbody tr:nth-child(even) { background: rgba(154,123,46,0.06); }
+
+    td { display: block; padding: 0.2rem 0; border: none; }
+    td:first-child {
+      font-family: 'Cinzel', serif;
+      font-size: 1rem;
+      color: var(--red);
+      padding-bottom: 0.35rem;
+      margin-bottom: 0.35rem;
+      border-bottom: 1px solid rgba(154,123,46,0.25) !important;
+    }
+
+    td[data-label]::before {
+      content: attr(data-label);
+      display: inline-block;
+      min-width: 5.2rem;
+      font-family: 'Cinzel', serif;
+      font-size: 0.6rem;
+      letter-spacing: 0.05em;
+      text-transform: uppercase;
+      color: var(--gold);
+      vertical-align: top;
+    }
+
+    .class-tags, .comp-tags { display: inline-flex; vertical-align: top; }
   }
 </style>
 </head>
 <body>
 <div class="page">
-  <h1>DS Tools</h1>
-  <p class="subtitle">Arianus Campaign — Reference Tools</p>
+  <div class="header-row">
+    <h1>PHB 2024 Spells</h1>
+    <button class="dark-btn" id="darkBtn" onclick="toggleDark()">☽ Dark Mode</button>
+  </div>
+  <p class="subtitle">Player's Handbook — All 389 Spells</p>
   <hr class="divider">
 
-  <div class="tool-list">
-    <a class="tool-link" href="spells_browser.html">
-      <span class="tool-name">Spell Browser</span>
-      <span class="tool-desc">All 389 PHB 2024 spells — searchable, sortable, class cross-reference</span>
-    </a>
-
-    <!-- Add more tools below as you upload them, following the same pattern:
-    <a class="tool-link" href="weapons_mastery.html">
-      <span class="tool-name">Weapons &amp; Mastery</span>
-      <span class="tool-desc">Full weapons table with mastery properties</span>
-    </a>
-    -->
+  <div class="controls">
+    <div class="control-group">
+      <label>Search</label>
+      <div class="search-wrap">
+        <input type="text" id="search" placeholder="Spell name…">
+      </div>
+    </div>
+    <div class="control-group">
+      <label>Level</label>
+      <select id="levelFilter">
+        <option value="">All Levels</option>
+        <option value="0">Cantrip</option>
+        <option value="1">Level 1</option>
+        <option value="2">Level 2</option>
+        <option value="3">Level 3</option>
+        <option value="4">Level 4</option>
+        <option value="5">Level 5</option>
+        <option value="6">Level 6</option>
+        <option value="7">Level 7</option>
+        <option value="8">Level 8</option>
+        <option value="9">Level 9</option>
+      </select>
+    </div>
+    <div class="control-group">
+      <label>School</label>
+      <select id="schoolFilter">
+        <option value="">All Schools</option>
+        <option value="Abjuration">Abjuration</option>
+        <option value="Conjuration">Conjuration</option>
+        <option value="Divination">Divination</option>
+        <option value="Enchantment">Enchantment</option>
+        <option value="Evocation">Evocation</option>
+        <option value="Illusion">Illusion</option>
+        <option value="Necromancy">Necromancy</option>
+        <option value="Transmutation">Transmutation</option>
+      </select>
+    </div>
+    <div class="control-group">
+      <label>Cast Time</label>
+      <select id="castFilter">
+        <option value="">Any Time</option>
+        <option value="Action">Action</option>
+        <option value="Bonus Action">Bonus Action</option>
+        <option value="Reaction">Reaction</option>
+        <option value="1 minute">1 minute+</option>
+      </select>
+    </div>
+    <div class="control-group control-group--wide">
+      <label>
+        Class <span id="classMode" class="mode-pill" onclick="toggleClassMode()">ANY</span>
+        <span class="comp-filter-group">
+          <button class="chip comp-chip" id="compFilterV" onclick="toggleCompFilter('V', this)">V</button>
+          <button class="chip comp-chip" id="compFilterS" onclick="toggleCompFilter('S', this)">S</button>
+          <button class="chip comp-chip" id="compFilterM" onclick="toggleCompFilter('M', this)">M</button>
+        </span>
+      </label>
+      <div class="class-chips" id="classChips">
+        <button class="chip" data-class="Bard" onclick="toggleChip(this)">Bard</button>
+        <button class="chip" data-class="Cleric" onclick="toggleChip(this)">Cleric</button>
+        <button class="chip" data-class="Druid" onclick="toggleChip(this)">Druid</button>
+        <button class="chip" data-class="Paladin" onclick="toggleChip(this)">Paladin</button>
+        <button class="chip" data-class="Ranger" onclick="toggleChip(this)">Ranger</button>
+        <button class="chip" data-class="Sorcerer" onclick="toggleChip(this)">Sorcerer</button>
+        <button class="chip" data-class="Warlock" onclick="toggleChip(this)">Warlock</button>
+        <button class="chip" data-class="Wizard" onclick="toggleChip(this)">Wizard</button>
+      </div>
+    </div>
   </div>
 
-  <p class="footer-note">More tools added as they're built.</p>
+  <div class="toggle-row">
+    <button class="toggle-btn" id="concBtn" onclick="toggleConc()">Concentration Only</button>
+    <button class="toggle-btn" id="ritBtn" onclick="toggleRit()">Ritual Only</button>
+  </div>
+
+  <button class="reset-btn" onclick="reset()">Reset Filters</button>
+
+  <p class="count">Showing <span id="countNum">389</span> of 389 spells</p>
+
+  <table>
+    <thead>
+      <tr>
+        <th onclick="sort('name')" id="th-name">Name <span class="sort-arrow">▲</span></th>
+        <th onclick="sort('level')" id="th-level">Level <span class="sort-arrow">—</span></th>
+        <th onclick="sort('school')" id="th-school">School <span class="sort-arrow">—</span></th>
+        <th onclick="sort('castTime')" id="th-castTime">Cast Time <span class="sort-arrow">—</span></th>
+        <th onclick="sort('range')" id="th-range">Range <span class="sort-arrow">—</span></th>
+        <th onclick="sort('duration')" id="th-duration">Duration <span class="sort-arrow">—</span></th>
+        <th>Comp</th>
+        <th>Classes</th>
+      </tr>
+    </thead>
+    <tbody id="tbody"></tbody>
+  </table>
+  <div id="empty" class="empty" style="display:none">No spells match the current filters.</div>
 </div>
-</body>
-</html>
+
+<script>
+const SPELLS = [{"name": "Acid Splash", "school": "Evocation", "level": 0, "classes": ["Sorcerer", "Wizard"], "castTime": "Action", "range": "60 feet", "duration": "Instantaneous", "concentration": false, "ritual": false, "components": "V, S"}, {"name": "Aid", "school": "Abjuration", "level": 2, "classes": ["Bard", "Cleric", "Druid", "Paladin", "Ranger"], "castTime": "Action", "range": "30 feet", "duration": "8 hours", "concentration": false, "ritual": false, "components": "V, S, M (a strip of white cloth)"}, {"name": "Alarm", "school": "Abjuration", "level": 1, "classes": ["Ranger", "Wizard"], "castTime": "1 minute or Ritual", "range": "30 feet", "duration": "8 hours", "concentration": false, "ritual": true, "components": "V, S, M (a bell and silver wire)"}, {"name": "Alter Self", "school": "Transmutation", "level": 2, "classes": ["Sorcerer", "Wizard"], "castTime": "Action", "range": "Self", "duration": "Concentration, up to 1 hour", "concentration": true, "ritual": false, "components": "V, S"}, {"name": "Animal Friendship", "school": "Enchantment", "level": 1, "classes": ["Bard", "Druid", "Ranger"], "castTime": "Action", "range": "30 feet", "duration": "24 hours", "concentration": false, "ritual": false, "components": "V, S, M (a morsel of food)"}, {"name": "Animal Messenger", "school": "Enchantment", "level": 2, "classes": ["Bard", "Druid", "Ranger"], "castTime": "Action or Ritual", "range": "30 feet", "duration": "24 hours", "concentration": false, "ritual": true, "components": "V, S, M (a morsel of food)"}, {"name": "Animal Shapes", "school": "Transmutation", "level": 8, "classes": ["Druid"], "castTime": "Action", "range": "30 feet", "duration": "24 hours", "concentration": false, "ritual": false, "components": "V, S"}, {"name": "Animate Dead", "school": "Necromancy", "level": 3, "classes": ["Cleric", "Wizard"], "castTime": "1 minute", "range": "10 feet", "duration": "Instantaneous", "concentration": false, "ritual": false, "components": "V, S, M (a drop of blood, a piece of flesh, and a pinch of bone dust)"}, {"name": "Animate Objects", "school": "Transmutation", "level": 5, "classes": ["Bard", "Sorcerer", "Wizard"], "castTime": "Action", "range": "120 feet", "duration": "Concentration, up to 1 minute", "concentration": true, "ritual": false, "components": "V, S"}, {"name": "Antilife Shell", "school": "Abjuration", "level": 5, "classes": ["Druid"], "castTime": "Action", "range": "Self", "duration": "Concentration, up to 1 hour", "concentration": true, "ritual": false, "components": "V, S"}, {"name": "Antimagic Field", "school": "Abjuration", "level": 8, "classes": ["Cleric", "Wizard"], "castTime": "Action", "range": "Self", "duration": "Concentration, up to 1 hour", "concentration": true, "ritual": false, "components": "V, S, M (iron filings)"}, {"name": "Antipathy/Sympathy", "school": "Enchantment", "level": 8, "classes": ["Bard", "Druid", "Wizard"], "castTime": "1 hour", "range": "60 feet", "duration": "10 days", "concentration": false, "ritual": false, "components": "V, S, M (a mix of vinegar and honey)"}, {"name": "Arcane Eye", "school": "Divination", "level": 4, "classes": ["Wizard"], "castTime": "Action", "range": "30 feet", "duration": "Concentration, up to 1 hour", "concentration": true, "ritual": false, "components": "V, S, M (a bit of bat fur)"}, {"name": "Arcane Gate", "school": "Conjuration", "level": 6, "classes": ["Sorcerer", "Warlock", "Wizard"], "castTime": "Action", "range": "500 feet", "duration": "Concentration, up to 10 minutes", "concentration": true, "ritual": false, "components": "V, S"}, {"name": "Arcane Lock", "school": "Abjuration", "level": 2, "classes": ["Wizard"], "castTime": "Action", "range": "Touch", "duration": "Until dispelled", "concentration": false, "ritual": false, "components": "V, S, M (gold dust worth 25+ GP, which the spell consumes)"}, {"name": "Arcane Vigor", "school": "Abjuration", "level": 2, "classes": ["Sorcerer", "Wizard"], "castTime": "Bonus Action", "range": "Self", "duration": "Instantaneous", "concentration": false, "ritual": false, "components": "V, S"}, {"name": "Armor of Agathys", "school": "Abjuration", "level": 1, "classes": ["Warlock"], "castTime": "Bonus Action", "range": "Self", "duration": "1 hour", "concentration": false, "ritual": false, "components": "V, S, M (a shard of blue glass)"}, {"name": "Arms of Hadar", "school": "Conjuration", "level": 1, "classes": ["Warlock"], "castTime": "Action", "range": "Self", "duration": "Instantaneous", "concentration": false, "ritual": false, "components": "V, S"}, {"name": "Astral Projection", "school": "Necromancy", "level": 9, "classes": ["Cleric", "Warlock", "Wizard"], "castTime": "1 hour", "range": "10 feet", "duration": "Until dispelled", "concentration": false, "ritual": false, "components": "V, S, M (for each of the spell\u2019s targets, one jacinth worth 1,000+ GP and one silver bar worth"}, {"name": "Augury", "school": "Divination", "level": 2, "classes": ["Cleric", "Druid", "Wizard"], "castTime": "1 minute or Ritual", "range": "Self", "duration": "Instantaneous", "concentration": false, "ritual": true, "components": "V, S, M (specially marked sticks, bones, cards, or other divinatory tokens worth 25+ GP)"}, {"name": "Aura of Life", "school": "Abjuration", "level": 4, "classes": ["Cleric", "Paladin"], "castTime": "Action", "range": "Self", "duration": "Concentration, up to 10 minutes", "concentration": true, "ritual": false, "components": "V"}, {"name": "Aura of Purity", "school": "Abjuration", "level": 4, "classes": ["Cleric", "Paladin"], "castTime": "Action", "range": "Self", "duration": "Concentration, up to 10 minutes", "concentration": true, "ritual": false, "components": "V"}, {"name": "Aura of Vitality", "school": "Abjuration", "level": 3, "classes": ["Cleric", "Druid", "Paladin"], "castTime": "Action", "range": "Self", "duration": "Concentration, up to 1 minute", "concentration": true, "ritual": false, "components": "V"}, {"name": "Awaken", "school": "Transmutation", "level": 5, "classes": ["Bard", "Druid"], "castTime": "8 hours", "range": "Touch", "duration": "Instantaneous", "concentration": false, "ritual": false, "components": "V, S, M (an agate worth 1,000+ GP, which the spell consumes)"}, {"name": "Bane", "school": "Enchantment", "level": 1, "classes": ["Bard", "Cleric", "Warlock"], "castTime": "Action", "range": "30 feet", "duration": "Concentration, up to 1 minute", "concentration": true, "ritual": false, "components": "V, S, M (a drop of blood)"}, {"name": "Banishing Smite", "school": "Conjuration", "level": 5, "classes": ["Paladin"], "castTime": "Bonus Action, which you take immediately after hitting a creature with a Melee weapon or an", "range": "Self", "duration": "Concentration, up to 1 minute", "concentration": true, "ritual": false, "components": "V"}, {"name": "Banishment", "school": "Abjuration", "level": 4, "classes": ["Cleric", "Paladin", "Sorcerer", "Warlock", "Wizard"], "castTime": "Action", "range": "30 feet", "duration": "Concentration, up to 1 minute", "concentration": true, "ritual": false, "components": "V, S, M (a pentacle)"}, {"name": "Barkskin", "school": "Transmutation", "level": 2, "classes": ["Druid", "Ranger"], "castTime": "Bonus Action", "range": "Touch", "duration": "1 hour", "concentration": false, "ritual": false, "components": "V, S, M (a handful of bark)"}, {"name": "Beacon of Hope", "school": "Abjuration", "level": 3, "classes": ["Cleric"], "castTime": "Action", "range": "30 feet", "duration": "Concentration, up to 1 minute", "concentration": true, "ritual": false, "components": "V, S"}, {"name": "Beast Sense", "school": "Divination", "level": 2, "classes": ["Druid", "Ranger"], "castTime": "Action or Ritual", "range": "Touch", "duration": "Concentration, up to 1 hour", "concentration": true, "ritual": true, "components": "S"}, {"name": "Befuddlement", "school": "Enchantment", "level": 8, "classes": ["Bard", "Druid", "Warlock", "Wizard"], "castTime": "Action", "range": "150 feet", "duration": "Instantaneous", "concentration": false, "ritual": false, "components": "V, S, M (a key ring with no keys)"}, {"name": "Bestow Curse", "school": "Necromancy", "level": 3, "classes": ["Bard", "Cleric", "Wizard"], "castTime": "Action", "range": "Touch", "duration": "Concentration, up to 1 minute", "concentration": true, "ritual": false, "components": "V, S"}, {"name": "Bigby\u2019s Hand", "school": "Evocation", "level": 5, "classes": ["Sorcerer", "Wizard"], "castTime": "Action", "range": "120 feet", "duration": "Concentration, up to 1 minute", "concentration": true, "ritual": false, "components": "V, S, M (an eggshell and a glove)"}, {"name": "Blade Barrier", "school": "Evocation", "level": 6, "classes": ["Cleric"], "castTime": "Action", "range": "90 feet", "duration": "Concentration, up to 10 minutes", "concentration": true, "ritual": false, "components": "V, S"}, {"name": "Blade Ward", "school": "Abjuration", "level": 0, "classes": ["Bard", "Sorcerer", "Warlock", "Wizard"], "castTime": "Action", "range": "Self", "duration": "Concentration, up to 1 minute", "concentration": true, "ritual": false, "components": "V, S"}, {"name": "Bless", "school": "Enchantment", "level": 1, "classes": ["Cleric", "Paladin"], "castTime": "Action", "range": "30 feet", "duration": "Concentration, up to 1 minute", "concentration": true, "ritual": false, "components": "V, S, M (a Holy Symbol worth 5+ GP)"}, {"name": "Blight", "school": "Necromancy", "level": 4, "classes": ["Druid", "Sorcerer", "Warlock", "Wizard"], "castTime": "Action", "range": "30 feet", "duration": "Instantaneous", "concentration": false, "ritual": false, "components": "V, S"}, {"name": "Blinding Smite", "school": "Evocation", "level": 3, "classes": ["Paladin"], "castTime": "Bonus Action, which you take immediately after hitting a creature with a Melee weapon or an", "range": "Self", "duration": "1 minute", "concentration": false, "ritual": false, "components": "V"}, {"name": "Blindness/Deafness", "school": "Transmutation", "level": 2, "classes": ["Bard", "Cleric", "Sorcerer", "Wizard"], "castTime": "Action", "range": "120 feet", "duration": "1 minute", "concentration": false, "ritual": false, "components": "V"}, {"name": "Blink", "school": "Transmutation", "level": 3, "classes": ["Sorcerer", "Wizard"], "castTime": "Action", "range": "Self", "duration": "1 minute", "concentration": false, "ritual": false, "components": "V, S"}, {"name": "Blur", "school": "Illusion", "level": 2, "classes": ["Sorcerer", "Wizard"], "castTime": "Action", "range": "Self", "duration": "Concentration, up to 1 minute", "concentration": true, "ritual": false, "components": "V"}, {"name": "Burning Hands", "school": "Evocation", "level": 1, "classes": ["Sorcerer", "Wizard"], "castTime": "Action", "range": "Self", "duration": "Instantaneous", "concentration": false, "ritual": false, "components": "V, S"}, {"name": "Call Lightning", "school": "Conjuration", "level": 3, "classes": ["Druid"], "castTime": "Action", "range": "120 feet", "duration": "Concentration, up to 10 minutes", "concentration": true, "ritual": false, "components": "V, S"}, {"name": "Calm Emotions", "school": "Enchantment", "level": 2, "classes": ["Bard", "Cleric"], "castTime": "Action", "range": "60 feet", "duration": "Concentration, up to 1 minute", "concentration": true, "ritual": false, "components": "V, S"}, {"name": "Chain Lightning", "school": "Evocation", "level": 6, "classes": ["Sorcerer", "Wizard"], "castTime": "Action", "range": "150 feet", "duration": "Instantaneous", "concentration": false, "ritual": false, "components": "V, S, M (three silver pins)"}, {"name": "Charm Monster", "school": "Enchantment", "level": 4, "classes": ["Bard", "Druid", "Sorcerer", "Warlock", "Wizard"], "castTime": "Action", "range": "30 feet", "duration": "1 hour", "concentration": false, "ritual": false, "components": "V, S"}, {"name": "Charm Person", "school": "Enchantment", "level": 1, "classes": ["Bard", "Druid", "Sorcerer", "Warlock", "Wizard"], "castTime": "Action", "range": "30 feet", "duration": "1 hour", "concentration": false, "ritual": false, "components": "V, S"}, {"name": "Chill Touch", "school": "Necromancy", "level": 0, "classes": ["Sorcerer", "Warlock", "Wizard"], "castTime": "Action", "range": "Touch", "duration": "Instantaneous", "concentration": false, "ritual": false, "components": "V, S"}, {"name": "Chromatic Orb", "school": "Evocation", "level": 1, "classes": ["Sorcerer", "Wizard"], "castTime": "Action", "range": "90 feet", "duration": "Instantaneous", "concentration": false, "ritual": false, "components": "V, S, M (a diamond worth 50+ GP)"}, {"name": "Circle of Death", "school": "Necromancy", "level": 6, "classes": ["Sorcerer", "Warlock", "Wizard"], "castTime": "Action", "range": "150 feet", "duration": "Instantaneous", "concentration": false, "ritual": false, "components": "V, S, M (the powder of a crushed black pearl worth 500+ GP)"}, {"name": "Circle of Power", "school": "Abjuration", "level": 5, "classes": ["Cleric", "Paladin", "Wizard"], "castTime": "Action", "range": "Self", "duration": "Concentration, up to 10 minutes", "concentration": true, "ritual": false, "components": "V"}, {"name": "Clairvoyance", "school": "Divination", "level": 3, "classes": ["Bard", "Cleric", "Sorcerer", "Wizard"], "castTime": "10 minutes", "range": "1 mile", "duration": "Concentration, up to 10 minutes", "concentration": true, "ritual": false, "components": "V, S, M (a focus worth 100+ GP, either a jeweled horn for hearing or a glass eye for seeing)"}, {"name": "Clone", "school": "Necromancy", "level": 8, "classes": ["Wizard"], "castTime": "1 hour", "range": "Touch", "duration": "Instantaneous", "concentration": false, "ritual": false, "components": "V, S, M (a diamond worth 1,000+ GP, which the spell consumes, and a sealable vessel worth"}, {"name": "Cloudkill", "school": "Conjuration", "level": 5, "classes": ["Sorcerer", "Wizard"], "castTime": "Action", "range": "120 feet", "duration": "Concentration, up to 10 minutes", "concentration": true, "ritual": false, "components": "V, S"}, {"name": "Cloud of Daggers", "school": "Conjuration", "level": 2, "classes": ["Bard", "Sorcerer", "Warlock", "Wizard"], "castTime": "Action", "range": "60 feet", "duration": "Concentration, up to 1 minute", "concentration": true, "ritual": false, "components": "V, S, M (a sliver of glass)"}, {"name": "Color Spray", "school": "Illusion", "level": 1, "classes": ["Bard", "Sorcerer", "Wizard"], "castTime": "Action", "range": "Self", "duration": "Instantaneous", "concentration": false, "ritual": false, "components": "V, S, M (a pinch of colorful sand)"}, {"name": "Command", "school": "Enchantment", "level": 1, "classes": ["Bard", "Cleric", "Paladin"], "castTime": "Action", "range": "60 feet", "duration": "Instantaneous", "concentration": false, "ritual": false, "components": "V"}, {"name": "Commune", "school": "Divination", "level": 5, "classes": ["Cleric"], "castTime": "1 minute or Ritual", "range": "Self", "duration": "1 minute", "concentration": false, "ritual": true, "components": "V, S, M (incense)"}, {"name": "Commune with Nature", "school": "Divination", "level": 5, "classes": ["Druid", "Ranger"], "castTime": "1 minute or Ritual", "range": "Self", "duration": "Instantaneous", "concentration": false, "ritual": true, "components": "V, S"}, {"name": "Compelled Duel", "school": "Enchantment", "level": 1, "classes": ["Paladin"], "castTime": "Bonus Action", "range": "30 feet", "duration": "Concentration, up to 1 minute", "concentration": true, "ritual": false, "components": "V"}, {"name": "Comprehend Languages", "school": "Divination", "level": 1, "classes": ["Bard", "Sorcerer", "Warlock", "Wizard"], "castTime": "Action or Ritual", "range": "Self", "duration": "1 hour", "concentration": false, "ritual": true, "components": "V, S, M (a pinch of soot and salt)"}, {"name": "Compulsion", "school": "Enchantment", "level": 4, "classes": ["Bard"], "castTime": "Action", "range": "30 feet", "duration": "Concentration, up to 1 minute", "concentration": true, "ritual": false, "components": "V, S"}, {"name": "Cone of Cold", "school": "Evocation", "level": 5, "classes": ["Druid", "Sorcerer", "Wizard"], "castTime": "Action", "range": "Self", "duration": "Instantaneous", "concentration": false, "ritual": false, "components": "V, S, M (a small crystal or glass cone)"}, {"name": "Confusion", "school": "Enchantment", "level": 4, "classes": ["Bard", "Druid", "Sorcerer", "Wizard"], "castTime": "Action", "range": "90 feet", "duration": "Concentration, up to 1 minute", "concentration": true, "ritual": false, "components": "V, S, M (three nut shells)"}, {"name": "Conjure Animals", "school": "Conjuration", "level": 3, "classes": ["Druid", "Ranger"], "castTime": "Action", "range": "60 feet", "duration": "Concentration, up to 10 minutes", "concentration": true, "ritual": false, "components": "V, S"}, {"name": "Conjure Barrage", "school": "Conjuration", "level": 3, "classes": ["Ranger"], "castTime": "Action", "range": "Self", "duration": "Instantaneous", "concentration": false, "ritual": false, "components": "V, S, M (a Melee or Ranged weapon worth at least 1 CP)"}, {"name": "Conjure Celestial", "school": "Conjuration", "level": 7, "classes": ["Cleric"], "castTime": "Action", "range": "90 feet", "duration": "Concentration, up to 10 minutes", "concentration": true, "ritual": false, "components": "V, S"}, {"name": "Conjure Elemental", "school": "Conjuration", "level": 5, "classes": ["Druid", "Wizard"], "castTime": "Action", "range": "60 feet", "duration": "Concentration, up to 10 minutes", "concentration": true, "ritual": false, "components": "V, S"}, {"name": "Conjure Fey", "school": "Conjuration", "level": 6, "classes": ["Druid"], "castTime": "Action", "range": "60 feet", "duration": "Concentration, up to 10 minutes", "concentration": true, "ritual": false, "components": "V, S"}, {"name": "Conjure Minor Elementals", "school": "Conjuration", "level": 4, "classes": ["Druid", "Wizard"], "castTime": "Action", "range": "Self", "duration": "Concentration, up to 10 minutes", "concentration": true, "ritual": false, "components": "V, S"}, {"name": "Conjure Volley", "school": "Conjuration", "level": 5, "classes": ["Ranger"], "castTime": "Action", "range": "150 feet", "duration": "Instantaneous", "concentration": false, "ritual": false, "components": "V, S, M (a Melee or Ranged weapon worth at least 1 CP)"}, {"name": "Conjure Woodland Beings", "school": "Conjuration", "level": 4, "classes": ["Druid", "Ranger"], "castTime": "Action", "range": "Self", "duration": "Concentration, up to 10 minutes", "concentration": true, "ritual": false, "components": "V, S"}, {"name": "Contact Other Plane", "school": "Divination", "level": 5, "classes": ["Warlock", "Wizard"], "castTime": "1 minute or Ritual", "range": "Self", "duration": "1 minute", "concentration": false, "ritual": true, "components": "V"}, {"name": "Contagion", "school": "Necromancy", "level": 5, "classes": ["Cleric", "Druid"], "castTime": "Action", "range": "Touch", "duration": "7 days", "concentration": false, "ritual": false, "components": "V, S"}, {"name": "Contingency", "school": "Abjuration", "level": 6, "classes": ["Wizard"], "castTime": "10 minutes", "range": "Self", "duration": "10 days", "concentration": false, "ritual": false, "components": "V, S, M (a gem-encrusted statuette of yourself worth 1,500+ GP)"}, {"name": "Continual Flame", "school": "Evocation", "level": 2, "classes": ["Cleric", "Druid", "Wizard"], "castTime": "Action", "range": "Touch", "duration": "Until dispelled", "concentration": false, "ritual": false, "components": "V, S, M (ruby dust worth 50+ GP, which the spell consumes)"}, {"name": "Control Water", "school": "Transmutation", "level": 4, "classes": ["Cleric", "Druid", "Wizard"], "castTime": "Action", "range": "300 feet", "duration": "Concentration, up to 10 minutes", "concentration": true, "ritual": false, "components": "V, S, M (a mixture of water and dust)"}, {"name": "Control Weather", "school": "Transmutation", "level": 8, "classes": ["Cleric", "Druid", "Wizard"], "castTime": "10 minutes", "range": "Self", "duration": "Concentration, up to 8 hours", "concentration": true, "ritual": false, "components": "V, S, M (burning incense)"}, {"name": "Cordon of Arrows", "school": "Transmutation", "level": 2, "classes": ["Ranger"], "castTime": "Action", "range": "Touch", "duration": "8 hours", "concentration": false, "ritual": false, "components": "V, S, M (an ornamental braid)"}, {"name": "Counterspell", "school": "Abjuration", "level": 3, "classes": ["Sorcerer", "Warlock", "Wizard"], "castTime": "Reaction, which you take when you see a creature within 60 feet of yourself casting a spell", "range": "60 feet", "duration": "Instantaneous", "concentration": false, "ritual": false, "components": "S"}, {"name": "Create Food and Water", "school": "Conjuration", "level": 3, "classes": ["Cleric", "Paladin"], "castTime": "Action", "range": "30 feet", "duration": "Instantaneous", "concentration": false, "ritual": false, "components": "V, S"}, {"name": "Create or Destroy Water", "school": "Transmutation", "level": 1, "classes": ["Cleric", "Druid"], "castTime": "Action", "range": "30 feet", "duration": "Instantaneous", "concentration": false, "ritual": false, "components": "V, S, M (a mix of water and sand)"}, {"name": "Create Undead", "school": "Necromancy", "level": 6, "classes": ["Cleric", "Warlock", "Wizard"], "castTime": "1 minute", "range": "10 feet", "duration": "Instantaneous", "concentration": false, "ritual": false, "components": "V, S, M (one 150+ GP black onyx stone for each corpse)"}, {"name": "Creation", "school": "Illusion", "level": 5, "classes": ["Sorcerer", "Wizard"], "castTime": "1 minute", "range": "30 feet", "duration": "Special", "concentration": false, "ritual": false, "components": "V, S, M (a paintbrush)"}, {"name": "Crown of Madness", "school": "Enchantment", "level": 2, "classes": ["Bard", "Sorcerer", "Warlock", "Wizard"], "castTime": "Action", "range": "120 feet", "duration": "Concentration, up to 1 minute", "concentration": true, "ritual": false, "components": "V, S"}, {"name": "Crusader\u2019s Mantle", "school": "Evocation", "level": 3, "classes": ["Paladin"], "castTime": "Action", "range": "Self", "duration": "Concentration, up to 1 minute", "concentration": true, "ritual": false, "components": "V"}, {"name": "Cure Wounds", "school": "Abjuration", "level": 1, "classes": ["Bard", "Cleric", "Druid", "Paladin", "Ranger"], "castTime": "Action", "range": "Touch", "duration": "Instantaneous", "concentration": false, "ritual": false, "components": "V, S"}, {"name": "Dancing Lights", "school": "Illusion", "level": 0, "classes": ["Bard", "Sorcerer", "Wizard"], "castTime": "Action", "range": "120 feet", "duration": "Concentration, up to 1 minute", "concentration": true, "ritual": false, "components": "V, S, M (a bit of phosphorus)"}, {"name": "Darkness", "school": "Evocation", "level": 2, "classes": ["Sorcerer", "Warlock", "Wizard"], "castTime": "Action", "range": "60 feet", "duration": "Concentration, up to 10 minutes", "concentration": true, "ritual": false, "components": "V, M (bat fur and a piece of coal)"}, {"name": "Darkvision", "school": "Transmutation", "level": 2, "classes": ["Druid", "Ranger", "Sorcerer", "Wizard"], "castTime": "Action", "range": "Touch", "duration": "8 hours", "concentration": false, "ritual": false, "components": "V, S, M (a dried carrot)"}, {"name": "Daylight", "school": "Evocation", "level": 3, "classes": ["Cleric", "Druid", "Paladin", "Ranger", "Sorcerer"], "castTime": "Action", "range": "60 feet", "duration": "1 hour", "concentration": false, "ritual": false, "components": "V, S"}, {"name": "Death Ward", "school": "Abjuration", "level": 4, "classes": ["Cleric", "Paladin"], "castTime": "Action", "range": "Touch", "duration": "8 hours", "concentration": false, "ritual": false, "components": "V, S"}, {"name": "Delayed Blast Fireball", "school": "Evocation", "level": 7, "classes": ["Sorcerer", "Wizard"], "castTime": "Action", "range": "150 feet", "duration": "Concentration, up to 1 minute", "concentration": true, "ritual": false, "components": "V, S, M (a ball of bat guano and sulfur)"}, {"name": "Demiplane", "school": "Conjuration", "level": 8, "classes": ["Sorcerer", "Warlock", "Wizard"], "castTime": "Action", "range": "60 feet", "duration": "1 hour", "concentration": false, "ritual": false, "components": "S"}, {"name": "Destructive Wave", "school": "Evocation", "level": 5, "classes": ["Paladin"], "castTime": "Action", "range": "Self", "duration": "Instantaneous", "concentration": false, "ritual": false, "components": "V"}, {"name": "Detect Evil and Good", "school": "Divination", "level": 1, "classes": ["Cleric", "Paladin"], "castTime": "Action", "range": "Self", "duration": "Concentration, up to 10 minutes", "concentration": true, "ritual": false, "components": "V, S"}, {"name": "Detect Magic", "school": "Divination", "level": 1, "classes": ["Bard", "Cleric", "Druid", "Paladin", "Ranger", "Sorcerer", "Warlock", "Wizard"], "castTime": "Action or Ritual", "range": "Self", "duration": "Concentration, up to 10 minutes", "concentration": true, "ritual": true, "components": "V, S"}, {"name": "Detect Poison and Disease", "school": "Divination", "level": 1, "classes": ["Cleric", "Druid", "Paladin", "Ranger"], "castTime": "Action or Ritual", "range": "Self", "duration": "Concentration, up to 10 minutes", "concentration": true, "ritual": true, "components": "V, S, M (a yew leaf)"}, {"name": "Detect Thoughts", "school": "Divination", "level": 2, "classes": ["Bard", "Sorcerer", "Wizard"], "castTime": "Action", "range": "Self", "duration": "Concentration, up to 1 minute", "concentration": true, "ritual": false, "components": "V, S, M (1 Copper Piece)"}, {"name": "Dimension Door", "school": "Conjuration", "level": 4, "classes": ["Bard", "Sorcerer", "Warlock", "Wizard"], "castTime": "Action", "range": "500 feet", "duration": "Instantaneous", "concentration": false, "ritual": false, "components": "V"}, {"name": "Disguise Self", "school": "Illusion", "level": 1, "classes": ["Bard", "Sorcerer", "Wizard"], "castTime": "Action", "range": "Self", "duration": "1 hour", "concentration": false, "ritual": false, "components": "V, S"}, {"name": "Disintegrate", "school": "Transmutation", "level": 6, "classes": ["Sorcerer", "Wizard"], "castTime": "Action", "range": "60 feet", "duration": "Instantaneous", "concentration": false, "ritual": false, "components": "V, S, M (a lodestone and dust)"}, {"name": "Dispel Evil and Good", "school": "Abjuration", "level": 5, "classes": ["Cleric", "Paladin"], "castTime": "Action", "range": "Self", "duration": "Concentration, up to 1 minute", "concentration": true, "ritual": false, "components": "V, S, M (powdered silver and iron)"}, {"name": "Dispel Magic", "school": "Abjuration", "level": 3, "classes": ["Bard", "Cleric", "Druid", "Paladin", "Ranger", "Sorcerer", "Warlock", "Wizard"], "castTime": "Action", "range": "120 feet", "duration": "Instantaneous", "concentration": false, "ritual": false, "components": "V, S"}, {"name": "Dissonant Whispers", "school": "Enchantment", "level": 1, "classes": ["Bard"], "castTime": "Action", "range": "60 feet", "duration": "Instantaneous", "concentration": false, "ritual": false, "components": "V"}, {"name": "Divination", "school": "Divination", "level": 4, "classes": ["Cleric", "Druid", "Wizard"], "castTime": "Action or Ritual", "range": "Self", "duration": "Instantaneous", "concentration": false, "ritual": true, "components": "V, S, M (incense worth 25+ GP, which the spell consumes)"}, {"name": "Divine Favor", "school": "Transmutation", "level": 1, "classes": ["Paladin"], "castTime": "Bonus Action", "range": "Self", "duration": "1 minute", "concentration": false, "ritual": false, "components": "V, S"}, {"name": "Divine Smite", "school": "Evocation", "level": 1, "classes": ["Paladin"], "castTime": "Bonus Action, which you take immediately after hitting a target with a Melee weapon or an", "range": "Self", "duration": "Instantaneous", "concentration": false, "ritual": false, "components": "V"}, {"name": "Divine Word", "school": "Evocation", "level": 7, "classes": ["Cleric"], "castTime": "Bonus Action", "range": "30 feet", "duration": "Instantaneous", "concentration": false, "ritual": false, "components": "V"}, {"name": "Dominate Beast", "school": "Enchantment", "level": 4, "classes": ["Druid", "Ranger", "Sorcerer"], "castTime": "Action", "range": "60 feet", "duration": "Concentration, up to 1 minute", "concentration": true, "ritual": false, "components": "V, S"}, {"name": "Dominate Monster", "school": "Enchantment", "level": 8, "classes": ["Bard", "Sorcerer", "Warlock", "Wizard"], "castTime": "Action", "range": "60 feet", "duration": "Concentration, up to 1 hour", "concentration": true, "ritual": false, "components": "V, S"}, {"name": "Dominate Person", "school": "Enchantment", "level": 5, "classes": ["Bard", "Sorcerer", "Wizard"], "castTime": "Action", "range": "60 feet", "duration": "Concentration, up to 1 minute", "concentration": true, "ritual": false, "components": "V, S"}, {"name": "Dragon\u2019s Breath", "school": "Transmutation", "level": 2, "classes": ["Sorcerer", "Wizard"], "castTime": "Bonus Action", "range": "Touch", "duration": "Concentration, up to 1 minute", "concentration": true, "ritual": false, "components": "V, S, M (a hot pepper)"}, {"name": "Drawmij\u2019s Instant Summons", "school": "Conjuration", "level": 6, "classes": ["Wizard"], "castTime": "1 minute or Ritual", "range": "Touch", "duration": "Until dispelled", "concentration": false, "ritual": true, "components": "V, S, M (a sapphire worth 1,000+ GP)"}, {"name": "Dream", "school": "Illusion", "level": 5, "classes": ["Bard", "Warlock", "Wizard"], "castTime": "1 minute", "range": "Special", "duration": "8 hours", "concentration": false, "ritual": false, "components": "V, S, M (a handful of sand)"}, {"name": "Druidcraft", "school": "Transmutation", "level": 0, "classes": ["Druid"], "castTime": "Action", "range": "30 feet", "duration": "Instantaneous", "concentration": false, "ritual": false, "components": "V, S"}, {"name": "Earthquake", "school": "Transmutation", "level": 8, "classes": ["Cleric", "Druid", "Sorcerer"], "castTime": "Action", "range": "500 feet", "duration": "Concentration, up to 1 minute", "concentration": true, "ritual": false, "components": "V, S, M (a fractured rock)"}, {"name": "Eldritch Blast", "school": "Evocation", "level": 0, "classes": ["Warlock"], "castTime": "Action", "range": "120 feet", "duration": "Instantaneous", "concentration": false, "ritual": false, "components": "V, S"}, {"name": "Elementalism", "school": "Transmutation", "level": 0, "classes": ["Druid", "Sorcerer", "Wizard"], "castTime": "Action", "range": "30 feet", "duration": "Instantaneous", "concentration": false, "ritual": false, "components": "V, S"}, {"name": "Elemental Weapon", "school": "Transmutation", "level": 3, "classes": ["Druid", "Paladin", "Ranger"], "castTime": "Action", "range": "Touch", "duration": "Concentration, up to 1 hour", "concentration": true, "ritual": false, "components": "V, S"}, {"name": "Enhance Ability", "school": "Transmutation", "level": 2, "classes": ["Bard", "Cleric", "Druid", "Ranger", "Sorcerer", "Wizard"], "castTime": "Action", "range": "Touch", "duration": "Concentration, up to 1 hour", "concentration": true, "ritual": false, "components": "V, S, M (fur or a feather)"}, {"name": "Enlarge/Reduce", "school": "Transmutation", "level": 2, "classes": ["Bard", "Druid", "Sorcerer", "Wizard"], "castTime": "Action", "range": "30 feet", "duration": "Concentration, up to 1 minute", "concentration": true, "ritual": false, "components": "V, S, M (a pinch of powdered iron)"}, {"name": "Ensnaring Strike", "school": "Conjuration", "level": 1, "classes": ["Ranger"], "castTime": "Bonus Action, which you take immediately after hitting a creature with a weapon", "range": "Self", "duration": "Concentration, up to 1 minute", "concentration": true, "ritual": false, "components": "V"}, {"name": "Entangle", "school": "Conjuration", "level": 1, "classes": ["Druid", "Ranger"], "castTime": "Action", "range": "90 feet", "duration": "Concentration, up to 1 minute", "concentration": true, "ritual": false, "components": "V, S"}, {"name": "Enthrall", "school": "Enchantment", "level": 2, "classes": ["Bard", "Warlock"], "castTime": "Action", "range": "60 feet", "duration": "Concentration, up to 1 minute", "concentration": true, "ritual": false, "components": "V, S"}, {"name": "Etherealness", "school": "Conjuration", "level": 7, "classes": ["Bard", "Cleric", "Sorcerer", "Warlock", "Wizard"], "castTime": "Action", "range": "Self", "duration": "Up to 8 hours", "concentration": false, "ritual": false, "components": "V, S"}, {"name": "Evard\u2019s Black Tentacles", "school": "Conjuration", "level": 4, "classes": ["Wizard"], "castTime": "Action", "range": "90 feet", "duration": "Concentration, up to 1 minute", "concentration": true, "ritual": false, "components": "V, S, M (a tentacle)"}, {"name": "Expeditious Retreat", "school": "Transmutation", "level": 1, "classes": ["Sorcerer", "Warlock", "Wizard"], "castTime": "Bonus Action", "range": "Self", "duration": "Concentration, up to 10 minutes", "concentration": true, "ritual": false, "components": "V, S"}, {"name": "Eyebite", "school": "Necromancy", "level": 6, "classes": ["Bard", "Sorcerer", "Warlock", "Wizard"], "castTime": "Action", "range": "Self", "duration": "Concentration, up to 1 minute", "concentration": true, "ritual": false, "components": "V, S"}, {"name": "Fabricate", "school": "Transmutation", "level": 4, "classes": ["Wizard"], "castTime": "10 minutes", "range": "120 feet", "duration": "Instantaneous", "concentration": false, "ritual": false, "components": "V, S"}, {"name": "Faerie Fire", "school": "Evocation", "level": 1, "classes": ["Bard", "Druid"], "castTime": "Action", "range": "60 feet", "duration": "Concentration, up to 1 minute", "concentration": true, "ritual": false, "components": "V"}, {"name": "False Life", "school": "Necromancy", "level": 1, "classes": ["Sorcerer", "Wizard"], "castTime": "Action", "range": "Self", "duration": "Instantaneous", "concentration": false, "ritual": false, "components": "V, S, M (a drop of alcohol)"}, {"name": "Fear", "school": "Illusion", "level": 3, "classes": ["Bard", "Sorcerer", "Warlock", "Wizard"], "castTime": "Action", "range": "Self", "duration": "Concentration, up to 1 minute", "concentration": true, "ritual": false, "components": "V, S, M (a white feather)"}, {"name": "Feather Fall", "school": "Transmutation", "level": 1, "classes": ["Bard", "Sorcerer", "Wizard"], "castTime": "Reaction, which you take when you or a creature you can see within 60 feet of you falls", "range": "60 feet", "duration": "1 minute", "concentration": false, "ritual": false, "components": "V, M (a small feather or piece of down)"}, {"name": "Feign Death", "school": "Necromancy", "level": 3, "classes": ["Bard", "Cleric", "Druid", "Wizard"], "castTime": "Action or Ritual", "range": "Touch", "duration": "1 hour", "concentration": false, "ritual": true, "components": "V, S, M (a pinch of graveyard dirt)"}, {"name": "Find Familiar", "school": "Conjuration", "level": 1, "classes": ["Wizard"], "castTime": "1 hour or Ritual", "range": "10 feet", "duration": "Instantaneous", "concentration": false, "ritual": true, "components": "V, S, M (burning incense worth 10+ GP, which the spell consumes)"}, {"name": "Find Steed", "school": "Conjuration", "level": 2, "classes": ["Paladin"], "castTime": "Action", "range": "30 feet", "duration": "Instantaneous", "concentration": false, "ritual": false, "components": "V, S"}, {"name": "Find the Path", "school": "Divination", "level": 6, "classes": ["Bard", "Cleric", "Druid"], "castTime": "1 minute", "range": "Self", "duration": "Concentration, up to 1 day", "concentration": true, "ritual": false, "components": "V, S, M (a set of divination tools\u2014such as cards or runes\u2014worth 100+ GP)"}, {"name": "Find Traps", "school": "Divination", "level": 2, "classes": ["Cleric", "Druid", "Ranger"], "castTime": "Action", "range": "120 feet", "duration": "Instantaneous", "concentration": false, "ritual": false, "components": "V, S"}, {"name": "Finger of Death", "school": "Necromancy", "level": 7, "classes": ["Sorcerer", "Warlock", "Wizard"], "castTime": "Action", "range": "60 feet", "duration": "Instantaneous", "concentration": false, "ritual": false, "components": "V, S"}, {"name": "Fireball", "school": "Evocation", "level": 3, "classes": ["Sorcerer", "Wizard"], "castTime": "Action", "range": "150 feet", "duration": "Instantaneous", "concentration": false, "ritual": false, "components": "V, S, M (a ball of bat guano and sulfur)"}, {"name": "Fire Bolt", "school": "Evocation", "level": 0, "classes": ["Sorcerer", "Wizard"], "castTime": "Action", "range": "120 feet", "duration": "Instantaneous", "concentration": false, "ritual": false, "components": "V, S"}, {"name": "Fire Shield", "school": "Evocation", "level": 4, "classes": ["Druid", "Sorcerer", "Wizard"], "castTime": "Action", "range": "Self", "duration": "10 minutes", "concentration": false, "ritual": false, "components": "V, S, M (a bit of phosphorus or a firefly)"}, {"name": "Fire Storm", "school": "Evocation", "level": 7, "classes": ["Cleric", "Druid", "Sorcerer"], "castTime": "Action", "range": "150 feet", "duration": "Instantaneous", "concentration": false, "ritual": false, "components": "V, S"}, {"name": "Flame Blade", "school": "Evocation", "level": 2, "classes": ["Druid", "Sorcerer"], "castTime": "Bonus Action", "range": "Self", "duration": "Concentration, up to 10 minutes", "concentration": true, "ritual": false, "components": "V, S, M (a sumac leaf)"}, {"name": "Flame Strike", "school": "Evocation", "level": 5, "classes": ["Cleric"], "castTime": "Action", "range": "60 feet", "duration": "Instantaneous", "concentration": false, "ritual": false, "components": "V, S, M (a pinch of sulfur)"}, {"name": "Flaming Sphere", "school": "Conjuration", "level": 2, "classes": ["Druid", "Sorcerer", "Wizard"], "castTime": "Action", "range": "60 feet", "duration": "Concentration, up to 1 minute", "concentration": true, "ritual": false, "components": "V, S, M (a ball of wax)"}, {"name": "Flesh to Stone", "school": "Transmutation", "level": 6, "classes": ["Druid", "Sorcerer", "Wizard"], "castTime": "Action", "range": "60 feet", "duration": "Concentration, up to 1 minute", "concentration": true, "ritual": false, "components": "V, S, M (a cockatrice feather)"}, {"name": "Fly", "school": "Transmutation", "level": 3, "classes": ["Sorcerer", "Warlock", "Wizard"], "castTime": "Action", "range": "Touch", "duration": "Concentration, up to 10 minutes", "concentration": true, "ritual": false, "components": "V, S, M (a feather)"}, {"name": "Fog Cloud", "school": "Conjuration", "level": 1, "classes": ["Druid", "Ranger", "Sorcerer", "Wizard"], "castTime": "Action", "range": "120 feet", "duration": "Concentration, up to 1 hour", "concentration": true, "ritual": false, "components": "V, S"}, {"name": "Forbiddance", "school": "Abjuration", "level": 6, "classes": ["Cleric"], "castTime": "10 minutes or Ritual", "range": "Touch", "duration": "1 day", "concentration": false, "ritual": true, "components": "V, S, M (ruby dust worth 1,000+ GP)"}, {"name": "Forcecage", "school": "Evocation", "level": 7, "classes": ["Bard", "Warlock", "Wizard"], "castTime": "Action", "range": "100 feet", "duration": "Concentration, up to 1 hour", "concentration": true, "ritual": false, "components": "V, S, M (ruby dust worth 1,500+ GP, which the spell consumes)"}, {"name": "Foresight", "school": "Divination", "level": 9, "classes": ["Bard", "Druid", "Warlock", "Wizard"], "castTime": "1 minute", "range": "Touch", "duration": "8 hours", "concentration": false, "ritual": false, "components": "V, S, M (a hummingbird feather)"}, {"name": "Fount of Moonlight", "school": "Evocation", "level": 4, "classes": ["Bard", "Druid"], "castTime": "Action", "range": "Self", "duration": "Concentration, up to 10 minutes", "concentration": true, "ritual": false, "components": "V, S"}, {"name": "Freedom of Movement", "school": "Abjuration", "level": 4, "classes": ["Bard", "Cleric", "Druid", "Ranger"], "castTime": "Action", "range": "Touch", "duration": "1 hour", "concentration": false, "ritual": false, "components": "V, S, M (a leather strap)"}, {"name": "Friends", "school": "Enchantment", "level": 0, "classes": ["Bard", "Sorcerer", "Warlock", "Wizard"], "castTime": "Action", "range": "10 feet", "duration": "Concentration, up to 1 minute", "concentration": true, "ritual": false, "components": "S, M (some makeup)"}, {"name": "Gaseous Form", "school": "Transmutation", "level": 3, "classes": ["Sorcerer", "Warlock", "Wizard"], "castTime": "Action", "range": "Touch", "duration": "Concentration, up to 1 hour", "concentration": true, "ritual": false, "components": "V, S, M (a bit of gauze)"}, {"name": "Gate", "school": "Conjuration", "level": 9, "classes": ["Cleric", "Sorcerer", "Warlock", "Wizard"], "castTime": "Action", "range": "60 feet", "duration": "Concentration, up to 1 minute", "concentration": true, "ritual": false, "components": "V, S, M (a diamond worth 5,000+ GP)"}, {"name": "Geas", "school": "Enchantment", "level": 5, "classes": ["Bard", "Cleric", "Druid", "Paladin", "Wizard"], "castTime": "1 minute", "range": "60 feet", "duration": "30 days", "concentration": false, "ritual": false, "components": "V"}, {"name": "Gentle Repose", "school": "Necromancy", "level": 2, "classes": ["Cleric", "Paladin", "Wizard"], "castTime": "Action or Ritual", "range": "Touch", "duration": "10 days", "concentration": false, "ritual": true, "components": "V, S, M (2 Copper Pieces, which the spell consumes)"}, {"name": "Giant Insect", "school": "Conjuration", "level": 4, "classes": ["Druid"], "castTime": "Action", "range": "60 feet", "duration": "Concentration, up to 10 minutes", "concentration": true, "ritual": false, "components": "V, S"}, {"name": "Glibness", "school": "Enchantment", "level": 8, "classes": ["Bard", "Warlock"], "castTime": "Action", "range": "Self", "duration": "1 hour", "concentration": false, "ritual": false, "components": "V"}, {"name": "Globe of Invulnerability", "school": "Abjuration", "level": 6, "classes": ["Sorcerer", "Wizard"], "castTime": "Action", "range": "Self", "duration": "Concentration, up to 1 minute", "concentration": true, "ritual": false, "components": "V, S, M (a glass bead)"}, {"name": "Glyph of Warding", "school": "Abjuration", "level": 3, "classes": ["Bard", "Cleric", "Wizard"], "castTime": "1 hour", "range": "Touch", "duration": "Until dispelled or triggered", "concentration": false, "ritual": false, "components": "V, S, M (powdered diamond worth 200+ GP, which the spell consumes)"}, {"name": "Goodberry", "school": "Conjuration", "level": 1, "classes": ["Druid", "Ranger"], "castTime": "Action", "range": "Self", "duration": "24 hours", "concentration": false, "ritual": false, "components": "V, S, M (a sprig of mistletoe)"}, {"name": "Grasping Vine", "school": "Conjuration", "level": 4, "classes": ["Druid", "Ranger"], "castTime": "Bonus Action", "range": "60 feet", "duration": "Concentration, up to 1 minute", "concentration": true, "ritual": false, "components": "V, S"}, {"name": "Grease", "school": "Conjuration", "level": 1, "classes": ["Sorcerer", "Wizard"], "castTime": "Action", "range": "60 feet", "duration": "1 minute", "concentration": false, "ritual": false, "components": "V, S, M (a bit of pork rind or butter)"}, {"name": "Greater Invisibility", "school": "Illusion", "level": 4, "classes": ["Bard", "Sorcerer", "Wizard"], "castTime": "Action", "range": "Touch", "duration": "Concentration, up to 1 minute", "concentration": true, "ritual": false, "components": "V, S"}, {"name": "Greater Restoration", "school": "Abjuration", "level": 5, "classes": ["Bard", "Cleric", "Druid", "Paladin", "Ranger"], "castTime": "Action", "range": "Touch", "duration": "Instantaneous", "concentration": false, "ritual": false, "components": "V, S, M (diamond dust worth 100+ GP, which the spell consumes)"}, {"name": "Guardian of Faith", "school": "Conjuration", "level": 4, "classes": ["Cleric"], "castTime": "Action", "range": "30 feet", "duration": "8 hours", "concentration": false, "ritual": false, "components": "V"}, {"name": "Guards and Wards", "school": "Abjuration", "level": 6, "classes": ["Bard", "Wizard"], "castTime": "1 hour", "range": "Touch", "duration": "24 hours", "concentration": false, "ritual": false, "components": "V, S, M (a silver rod worth 10+ GP)"}, {"name": "Guidance", "school": "Divination", "level": 0, "classes": ["Cleric", "Druid"], "castTime": "Action", "range": "Touch", "duration": "Concentration, up to 1 minute", "concentration": true, "ritual": false, "components": "V, S"}, {"name": "Guiding Bolt", "school": "Evocation", "level": 1, "classes": ["Cleric"], "castTime": "Action", "range": "120 feet", "duration": "1 round", "concentration": false, "ritual": false, "components": "V, S"}, {"name": "Gust of Wind", "school": "Evocation", "level": 2, "classes": ["Druid", "Ranger", "Sorcerer", "Wizard"], "castTime": "Action", "range": "Self", "duration": "Concentration, up to 1 minute", "concentration": true, "ritual": false, "components": "V, S, M (a legume seed)"}, {"name": "Hail of Thorns", "school": "Conjuration", "level": 1, "classes": ["Ranger"], "castTime": "Bonus Action, which you take immediately after hitting a creature with a Ranged weapon", "range": "Self", "duration": "Instantaneous", "concentration": false, "ritual": false, "components": "V"}, {"name": "Hallow", "school": "Abjuration", "level": 5, "classes": ["Cleric"], "castTime": "24 hours", "range": "Touch", "duration": "Until dispelled", "concentration": false, "ritual": false, "components": "V, S, M (incense worth 1,000+ GP, which the spell consumes)"}, {"name": "Hallucinatory Terrain", "school": "Illusion", "level": 4, "classes": ["Bard", "Druid", "Warlock", "Wizard"], "castTime": "10 minutes", "range": "300 feet", "duration": "24 hours", "concentration": false, "ritual": false, "components": "V, S, M (a mushroom)"}, {"name": "Harm", "school": "Necromancy", "level": 6, "classes": ["Cleric"], "castTime": "Action", "range": "60 feet", "duration": "Instantaneous", "concentration": false, "ritual": false, "components": "V, S"}, {"name": "Haste", "school": "Transmutation", "level": 3, "classes": ["Sorcerer", "Wizard"], "castTime": "Action", "range": "30 feet", "duration": "Concentration, up to 1 minute", "concentration": true, "ritual": false, "components": "V, S, M (a shaving of licorice root)"}, {"name": "Heal", "school": "Abjuration", "level": 6, "classes": ["Cleric", "Druid"], "castTime": "Action", "range": "60 feet", "duration": "Instantaneous", "concentration": false, "ritual": false, "components": "V, S"}, {"name": "Healing Word", "school": "Abjuration", "level": 1, "classes": ["Bard", "Cleric", "Druid"], "castTime": "Bonus Action", "range": "60 feet", "duration": "Instantaneous", "concentration": false, "ritual": false, "components": "V"}, {"name": "Heat Metal", "school": "Transmutation", "level": 2, "classes": ["Bard", "Druid"], "castTime": "Action", "range": "60 feet", "duration": "Concentration, up to 1 minute", "concentration": true, "ritual": false, "components": "V, S, M (a piece of iron and a flame)"}, {"name": "Hellish Rebuke", "school": "Evocation", "level": 1, "classes": ["Warlock"], "castTime": "Reaction, which you take in response to taking damage from a creature that you can see", "range": "60 feet", "duration": "Instantaneous", "concentration": false, "ritual": false, "components": "V, S"}, {"name": "Heroes\u2019 Feast", "school": "Conjuration", "level": 6, "classes": ["Bard", "Cleric", "Druid"], "castTime": "10 minutes", "range": "Self", "duration": "Instantaneous", "concentration": false, "ritual": false, "components": "V, S, M (a gem-encrusted bowl worth 1,000+ GP, which the spell consumes)"}, {"name": "Heroism", "school": "Enchantment", "level": 1, "classes": ["Bard", "Paladin"], "castTime": "Action", "range": "Touch", "duration": "Concentration, up to 1 minute", "concentration": true, "ritual": false, "components": "V, S"}, {"name": "Hex", "school": "Enchantment", "level": 1, "classes": ["Warlock"], "castTime": "Bonus Action", "range": "90 feet", "duration": "Concentration, up to 1 hour", "concentration": true, "ritual": false, "components": "V, S, M (the petrified eye of a newt)"}, {"name": "Hold Monster", "school": "Enchantment", "level": 5, "classes": ["Bard", "Sorcerer", "Warlock", "Wizard"], "castTime": "Action", "range": "90 feet", "duration": "Concentration, up to 1 minute", "concentration": true, "ritual": false, "components": "V, S, M (a straight piece of iron)"}, {"name": "Hold Person", "school": "Enchantment", "level": 2, "classes": ["Bard", "Cleric", "Druid", "Sorcerer", "Warlock", "Wizard"], "castTime": "Action", "range": "60 feet", "duration": "Concentration, up to 1 minute", "concentration": true, "ritual": false, "components": "V, S, M (a straight piece of iron)"}, {"name": "Holy Aura", "school": "Abjuration", "level": 8, "classes": ["Cleric"], "castTime": "Action", "range": "Self", "duration": "Concentration, up to 1 minute", "concentration": true, "ritual": false, "components": "V, S, M (a reliquary worth 1,000+ GP)"}, {"name": "Hunger of Hadar", "school": "Conjuration", "level": 3, "classes": ["Warlock"], "castTime": "Action", "range": "150 feet", "duration": "Concentration, up to 1 minute", "concentration": true, "ritual": false, "components": "V, S, M (a pickled tentacle)"}, {"name": "Hunter\u2019s Mark", "school": "Divination", "level": 1, "classes": ["Ranger"], "castTime": "Bonus Action", "range": "90 feet", "duration": "Concentration, up to 1 hour", "concentration": true, "ritual": false, "components": "V"}, {"name": "Hypnotic Pattern", "school": "Illusion", "level": 3, "classes": ["Bard", "Sorcerer", "Warlock", "Wizard"], "castTime": "Action", "range": "120 feet", "duration": "Concentration, up to 1 minute", "concentration": true, "ritual": false, "components": "S, M (a pinch of confetti)"}, {"name": "Ice Knife", "school": "Conjuration", "level": 1, "classes": ["Druid", "Sorcerer", "Wizard"], "castTime": "Action", "range": "60 feet", "duration": "Instantaneous", "concentration": false, "ritual": false, "components": "S, M (a drop of water or a piece of ice)"}, {"name": "Ice Storm", "school": "Evocation", "level": 4, "classes": ["Druid", "Sorcerer", "Wizard"], "castTime": "Action", "range": "300 feet", "duration": "Instantaneous", "concentration": false, "ritual": false, "components": "V, S, M (a mitten)"}, {"name": "Identify", "school": "Divination", "level": 1, "classes": ["Bard", "Wizard"], "castTime": "1 minute or Ritual", "range": "Touch", "duration": "Instantaneous", "concentration": false, "ritual": true, "components": "V, S, M (a pearl worth 100+ GP)"}, {"name": "Illusory Script", "school": "Illusion", "level": 1, "classes": ["Bard", "Warlock", "Wizard"], "castTime": "1 minute or Ritual", "range": "Touch", "duration": "10 days", "concentration": false, "ritual": true, "components": "S, M (ink worth 10+ GP, which the spell consumes)"}, {"name": "Imprisonment", "school": "Abjuration", "level": 9, "classes": ["Warlock", "Wizard"], "castTime": "1 minute", "range": "30 feet", "duration": "Until dispelled", "concentration": false, "ritual": false, "components": "V, S, M (a statuette of the target worth 5,000+ GP)"}, {"name": "Incendiary Cloud", "school": "Conjuration", "level": 8, "classes": ["Druid", "Sorcerer", "Wizard"], "castTime": "Action", "range": "150 feet", "duration": "Concentration, up to 1 minute", "concentration": true, "ritual": false, "components": "V, S"}, {"name": "Inflict Wounds", "school": "Necromancy", "level": 1, "classes": ["Cleric"], "castTime": "Action", "range": "Touch", "duration": "Instantaneous", "concentration": false, "ritual": false, "components": "V, S"}, {"name": "Insect Plague", "school": "Conjuration", "level": 5, "classes": ["Cleric", "Druid", "Sorcerer"], "castTime": "Action", "range": "300 feet", "duration": "Concentration, up to 10 minutes", "concentration": true, "ritual": false, "components": "V, S, M (a locust)"}, {"name": "Invisibility", "school": "Illusion", "level": 2, "classes": ["Bard", "Sorcerer", "Warlock", "Wizard"], "castTime": "Action", "range": "Touch", "duration": "Concentration, up to 1 hour", "concentration": true, "ritual": false, "components": "V, S, M (an eyelash in gum arabic)"}, {"name": "Jallarzi\u2019s Storm of Radiance", "school": "Evocation", "level": 5, "classes": ["Warlock", "Wizard"], "castTime": "Action", "range": "120 feet", "duration": "Concentration, up to 1 minute", "concentration": true, "ritual": false, "components": "V, S, M (a pinch of phosphorus)"}, {"name": "Jump", "school": "Transmutation", "level": 1, "classes": ["Druid", "Ranger", "Sorcerer", "Wizard"], "castTime": "Bonus Action", "range": "Touch", "duration": "1 minute", "concentration": false, "ritual": false, "components": "V, S, M (a grasshopper\u2019s hind leg)"}, {"name": "Knock", "school": "Transmutation", "level": 2, "classes": ["Bard", "Sorcerer", "Wizard"], "castTime": "Action", "range": "60 feet", "duration": "Instantaneous", "concentration": false, "ritual": false, "components": "V"}, {"name": "Legend Lore", "school": "Divination", "level": 5, "classes": ["Bard", "Cleric", "Wizard"], "castTime": "10 minutes", "range": "Self", "duration": "Instantaneous", "concentration": false, "ritual": false, "components": "V, S, M (incense worth 250+ GP, which the spell consumes, and four ivory strips worth 50+ GP"}, {"name": "Leomund\u2019s Secret Chest", "school": "Conjuration", "level": 4, "classes": ["Wizard"], "castTime": "Action", "range": "Touch", "duration": "Until dispelled", "concentration": false, "ritual": false, "components": "V, S, M (a chest, 3 feet by 2 feet by 2 feet, constructed from rare materials worth 5,000+ GP,"}, {"name": "Leomund\u2019s Tiny Hut", "school": "Evocation", "level": 3, "classes": ["Bard", "Wizard"], "castTime": "1 minute or Ritual", "range": "Self", "duration": "8 hours", "concentration": false, "ritual": true, "components": "V, S, M (a crystal bead)"}, {"name": "Lesser Restoration", "school": "Abjuration", "level": 2, "classes": ["Bard", "Cleric", "Druid", "Paladin", "Ranger"], "castTime": "Bonus Action", "range": "Touch", "duration": "Instantaneous", "concentration": false, "ritual": false, "components": "V, S"}, {"name": "Levitate", "school": "Transmutation", "level": 2, "classes": ["Sorcerer", "Wizard"], "castTime": "Action", "range": "60 feet", "duration": "Concentration, up to 10 minutes", "concentration": true, "ritual": false, "components": "V, S, M (a metal spring)"}, {"name": "Light", "school": "Evocation", "level": 0, "classes": ["Bard", "Cleric", "Sorcerer", "Wizard"], "castTime": "Action", "range": "Touch", "duration": "1 hour", "concentration": false, "ritual": false, "components": "V, M (a firefly or phosphorescent moss)"}, {"name": "Lightning Arrow", "school": "Transmutation", "level": 3, "classes": ["Ranger"], "castTime": "Bonus Action, which you take immediately after hitting or missing a target with a ranged", "range": "Self", "duration": "Instantaneous", "concentration": false, "ritual": false, "components": "V, S"}, {"name": "Lightning Bolt", "school": "Evocation", "level": 3, "classes": ["Sorcerer", "Wizard"], "castTime": "Action", "range": "Self", "duration": "Instantaneous", "concentration": false, "ritual": false, "components": "V, S, M (a bit of fur and a crystal rod)"}, {"name": "Locate Animals or Plants", "school": "Divination", "level": 2, "classes": ["Bard", "Druid", "Ranger"], "castTime": "Action or Ritual", "range": "Self", "duration": "Instantaneous", "concentration": false, "ritual": true, "components": "V, S, M (fur from a bloodhound)"}, {"name": "Locate Creature", "school": "Divination", "level": 4, "classes": ["Bard", "Cleric", "Druid", "Paladin", "Ranger", "Wizard"], "castTime": "Action", "range": "Self", "duration": "Concentration, up to 1 hour", "concentration": true, "ritual": false, "components": "V, S, M (fur from a bloodhound)"}, {"name": "Locate Object", "school": "Divination", "level": 2, "classes": ["Bard", "Cleric", "Druid", "Paladin", "Ranger", "Wizard"], "castTime": "Action", "range": "Self", "duration": "Concentration, up to 10 minutes", "concentration": true, "ritual": false, "components": "V, S, M (a forked twig)"}, {"name": "Longstrider", "school": "Transmutation", "level": 1, "classes": ["Bard", "Druid", "Ranger", "Wizard"], "castTime": "Action", "range": "Touch", "duration": "1 hour", "concentration": false, "ritual": false, "components": "V, S, M (a pinch of dirt)"}, {"name": "Mage Armor", "school": "Abjuration", "level": 1, "classes": ["Sorcerer", "Wizard"], "castTime": "Action", "range": "Touch", "duration": "8 hours", "concentration": false, "ritual": false, "components": "V, S, M (a piece of cured leather)"}, {"name": "Mage Hand", "school": "Conjuration", "level": 0, "classes": ["Bard", "Sorcerer", "Warlock", "Wizard"], "castTime": "Action", "range": "30 feet", "duration": "1 minute", "concentration": false, "ritual": false, "components": "V, S"}, {"name": "Magic Circle", "school": "Abjuration", "level": 3, "classes": ["Cleric", "Paladin", "Warlock", "Wizard"], "castTime": "1 minute", "range": "10 feet", "duration": "1 hour", "concentration": false, "ritual": false, "components": "V, S, M (salt and powdered silver worth 100+ GP, which the spell consumes)"}, {"name": "Magic Jar", "school": "Necromancy", "level": 6, "classes": ["Wizard"], "castTime": "1 minute", "range": "Self", "duration": "Until dispelled", "concentration": false, "ritual": false, "components": "V, S, M (a gem, crystal, or reliquary worth 500+ GP)"}, {"name": "Magic Missile", "school": "Evocation", "level": 1, "classes": ["Sorcerer", "Wizard"], "castTime": "Action", "range": "120 feet", "duration": "Instantaneous", "concentration": false, "ritual": false, "components": "V, S"}, {"name": "Magic Mouth", "school": "Illusion", "level": 2, "classes": ["Bard", "Wizard"], "castTime": "1 minute or Ritual", "range": "30 feet", "duration": "Until dispelled", "concentration": false, "ritual": true, "components": "V, S, M (jade dust worth 10+ GP, which the spell consumes)"}, {"name": "Magic Weapon", "school": "Transmutation", "level": 2, "classes": ["Paladin", "Ranger", "Sorcerer", "Wizard"], "castTime": "Bonus Action", "range": "Touch", "duration": "1 hour", "concentration": false, "ritual": false, "components": "V, S"}, {"name": "Major Image", "school": "Illusion", "level": 3, "classes": ["Bard", "Sorcerer", "Warlock", "Wizard"], "castTime": "Action", "range": "120 feet", "duration": "Concentration, up to 10 minutes", "concentration": true, "ritual": false, "components": "V, S, M (a bit of fleece)"}, {"name": "Mass Cure Wounds", "school": "Abjuration", "level": 5, "classes": ["Bard", "Cleric", "Druid"], "castTime": "Action", "range": "60 feet", "duration": "Instantaneous", "concentration": false, "ritual": false, "components": "V, S"}, {"name": "Mass Heal", "school": "Abjuration", "level": 9, "classes": ["Cleric"], "castTime": "Action", "range": "60 feet", "duration": "Instantaneous", "concentration": false, "ritual": false, "components": "V, S"}, {"name": "Mass Healing Word", "school": "Abjuration", "level": 3, "classes": ["Bard", "Cleric"], "castTime": "Bonus Action", "range": "60 feet", "duration": "Instantaneous", "concentration": false, "ritual": false, "components": "V"}, {"name": "Mass Suggestion", "school": "Enchantment", "level": 6, "classes": ["Bard", "Sorcerer", "Wizard"], "castTime": "Action", "range": "60 feet", "duration": "24 hours", "concentration": false, "ritual": false, "components": "V, M (a snake\u2019s tongue)"}, {"name": "Maze", "school": "Conjuration", "level": 8, "classes": ["Wizard"], "castTime": "Action", "range": "60 feet", "duration": "Concentration, up to 10 minutes", "concentration": true, "ritual": false, "components": "V, S"}, {"name": "Meld into Stone", "school": "Transmutation", "level": 3, "classes": ["Cleric", "Druid", "Ranger"], "castTime": "Action or Ritual", "range": "Touch", "duration": "8 hours", "concentration": false, "ritual": true, "components": "V, S"}, {"name": "Melf\u2019s Acid Arrow", "school": "Evocation", "level": 2, "classes": ["Wizard"], "castTime": "Action", "range": "90 feet", "duration": "Instantaneous", "concentration": false, "ritual": false, "components": "V, S, M (powdered rhubarb leaf)"}, {"name": "Mending", "school": "Transmutation", "level": 0, "classes": ["Bard", "Cleric", "Druid", "Sorcerer", "Wizard"], "castTime": "1 minute", "range": "Touch", "duration": "Instantaneous", "concentration": false, "ritual": false, "components": "V, S, M (two lodestones)"}, {"name": "Message", "school": "Transmutation", "level": 0, "classes": ["Bard", "Druid", "Sorcerer", "Wizard"], "castTime": "Action", "range": "120 feet", "duration": "1 round", "concentration": false, "ritual": false, "components": "S, M (a copper wire)"}, {"name": "Meteor Swarm", "school": "Evocation", "level": 9, "classes": ["Sorcerer", "Wizard"], "castTime": "Action", "range": "1 mile", "duration": "Instantaneous", "concentration": false, "ritual": false, "components": "V, S"}, {"name": "Mind Blank", "school": "Abjuration", "level": 8, "classes": ["Bard", "Wizard"], "castTime": "Action", "range": "Touch", "duration": "24 hours", "concentration": false, "ritual": false, "components": "V, S"}, {"name": "Mind Sliver", "school": "Enchantment", "level": 0, "classes": ["Sorcerer", "Warlock", "Wizard"], "castTime": "Action", "range": "60 feet", "duration": "1 round", "concentration": false, "ritual": false, "components": "V"}, {"name": "Mind Spike", "school": "Divination", "level": 2, "classes": ["Sorcerer", "Warlock", "Wizard"], "castTime": "Action", "range": "120 feet", "duration": "Concentration, up to 1 hour", "concentration": true, "ritual": false, "components": "S"}, {"name": "Minor Illusion", "school": "Illusion", "level": 0, "classes": ["Bard", "Sorcerer", "Warlock", "Wizard"], "castTime": "Action", "range": "30 feet", "duration": "1 minute", "concentration": false, "ritual": false, "components": "S, M (a bit of fleece)"}, {"name": "Mirage Arcane", "school": "Illusion", "level": 7, "classes": ["Bard", "Druid", "Wizard"], "castTime": "10 minutes", "range": "Sight", "duration": "10 days", "concentration": false, "ritual": false, "components": "V, S"}, {"name": "Mirror Image", "school": "Illusion", "level": 2, "classes": ["Bard", "Sorcerer", "Warlock", "Wizard"], "castTime": "Action", "range": "Self", "duration": "1 minute", "concentration": false, "ritual": false, "components": "V, S"}, {"name": "Mislead", "school": "Illusion", "level": 5, "classes": ["Bard", "Warlock", "Wizard"], "castTime": "Action", "range": "Self", "duration": "Concentration, up to 1 hour", "concentration": true, "ritual": false, "components": "S"}, {"name": "Misty Step", "school": "Conjuration", "level": 2, "classes": ["Sorcerer", "Warlock", "Wizard"], "castTime": "Bonus Action", "range": "Self", "duration": "Instantaneous", "concentration": false, "ritual": false, "components": "V"}, {"name": "Modify Memory", "school": "Enchantment", "level": 5, "classes": ["Bard", "Wizard"], "castTime": "Action", "range": "30 feet", "duration": "Concentration, up to 1 minute", "concentration": true, "ritual": false, "components": "V, S"}, {"name": "Moonbeam", "school": "Evocation", "level": 2, "classes": ["Druid"], "castTime": "Action", "range": "120 feet", "duration": "Concentration, up to 1 minute", "concentration": true, "ritual": false, "components": "V, S, M (a moonseed leaf)"}, {"name": "Mordenkainen\u2019s Faithful Hound", "school": "Conjuration", "level": 4, "classes": ["Wizard"], "castTime": "Action", "range": "30 feet", "duration": "8 hours", "concentration": false, "ritual": false, "components": "V, S, M (a silver whistle)"}, {"name": "Mordenkainen\u2019s Magnificent Mansion", "school": "Conjuration", "level": 7, "classes": ["Bard", "Wizard"], "castTime": "1 minute", "range": "300 feet", "duration": "24 hours", "concentration": false, "ritual": false, "components": "V, S, M (a miniature door worth 15+ GP)"}, {"name": "Mordenkainen\u2019s Private Sanctum", "school": "Abjuration", "level": 4, "classes": ["Wizard"], "castTime": "10 minutes", "range": "120 feet", "duration": "24 hours", "concentration": false, "ritual": false, "components": "V, S, M (a thin sheet of lead)"}, {"name": "Mordenkainen\u2019s Sword", "school": "Evocation", "level": 7, "classes": ["Bard", "Wizard"], "castTime": "Action", "range": "90 feet", "duration": "Concentration, up to 1 minute", "concentration": true, "ritual": false, "components": "V, S, M (a miniature sword worth 250+ GP)"}, {"name": "Move Earth", "school": "Transmutation", "level": 6, "classes": ["Druid", "Sorcerer", "Wizard"], "castTime": "Action", "range": "120 feet", "duration": "Concentration, up to 2 hours", "concentration": true, "ritual": false, "components": "V, S, M (a miniature shovel)"}, {"name": "Nondetection", "school": "Abjuration", "level": 3, "classes": ["Bard", "Ranger", "Wizard"], "castTime": "Action", "range": "Touch", "duration": "8 hours", "concentration": false, "ritual": false, "components": "V, S, M (a pinch of diamond dust worth 25+ GP, which the spell consumes)"}, {"name": "Nystul\u2019s Magic Aura", "school": "Illusion", "level": 2, "classes": ["Wizard"], "castTime": "Action", "range": "Touch", "duration": "24 hours", "concentration": false, "ritual": false, "components": "V, S, M (a small square of silk)"}, {"name": "Otiluke\u2019s Freezing Sphere", "school": "Evocation", "level": 6, "classes": ["Sorcerer", "Wizard"], "castTime": "Action", "range": "300 feet", "duration": "Instantaneous", "concentration": false, "ritual": false, "components": "V, S, M (a miniature crystal sphere)"}, {"name": "Otiluke\u2019s Resilient Sphere", "school": "Abjuration", "level": 4, "classes": ["Wizard"], "castTime": "Action", "range": "30 feet", "duration": "Concentration, up to 1 minute", "concentration": true, "ritual": false, "components": "V, S, M (a glass sphere)"}, {"name": "Otto\u2019s Irresistible Dance", "school": "Enchantment", "level": 6, "classes": ["Bard", "Wizard"], "castTime": "Action", "range": "30 feet", "duration": "Concentration, up to 1 minute", "concentration": true, "ritual": false, "components": "V"}, {"name": "Passwall", "school": "Transmutation", "level": 5, "classes": ["Wizard"], "castTime": "Action", "range": "30 feet", "duration": "1 hour", "concentration": false, "ritual": false, "components": "V, S, M (a pinch of sesame seeds)"}, {"name": "Pass without Trace", "school": "Abjuration", "level": 2, "classes": ["Druid", "Ranger"], "castTime": "Action", "range": "Self", "duration": "Concentration, up to 1 hour", "concentration": true, "ritual": false, "components": "V, S, M (ashes from burned mistletoe)"}, {"name": "Phantasmal Force", "school": "Illusion", "level": 2, "classes": ["Bard", "Sorcerer", "Wizard"], "castTime": "Action", "range": "60 feet", "duration": "Concentration, up to 1 minute", "concentration": true, "ritual": false, "components": "V, S, M (a bit of fleece)"}, {"name": "Phantasmal Killer", "school": "Illusion", "level": 4, "classes": ["Bard", "Wizard"], "castTime": "Action", "range": "120 feet", "duration": "Concentration, up to 1 minute", "concentration": true, "ritual": false, "components": "V, S"}, {"name": "Phantom Steed", "school": "Illusion", "level": 3, "classes": ["Wizard"], "castTime": "1 minute or Ritual", "range": "30 feet", "duration": "1 hour", "concentration": false, "ritual": true, "components": "V, S"}, {"name": "Planar Ally", "school": "Conjuration", "level": 6, "classes": ["Cleric"], "castTime": "10 minutes", "range": "60 feet", "duration": "Instantaneous", "concentration": false, "ritual": false, "components": "V, S"}, {"name": "Planar Binding", "school": "Abjuration", "level": 5, "classes": ["Bard", "Cleric", "Druid", "Warlock", "Wizard"], "castTime": "1 hour", "range": "60 feet", "duration": "24 hours", "concentration": false, "ritual": false, "components": "V, S, M (a jewel worth 1,000+ GP, which the spell consumes)"}, {"name": "Plane Shift", "school": "Conjuration", "level": 7, "classes": ["Cleric", "Druid", "Sorcerer", "Warlock", "Wizard"], "castTime": "Action", "range": "Touch", "duration": "Instantaneous", "concentration": false, "ritual": false, "components": "V, S, M (a forked, metal rod worth 250+ GP and attuned to a plane of existence)"}, {"name": "Plant Growth", "school": "Transmutation", "level": 3, "classes": ["Bard", "Druid", "Ranger"], "castTime": "Action (Overgrowth) or 8 hours (Enrichment)", "range": "150 feet", "duration": "Instantaneous", "concentration": false, "ritual": false, "components": "V, S"}, {"name": "Poison Spray", "school": "Necromancy", "level": 0, "classes": ["Druid", "Sorcerer", "Warlock", "Wizard"], "castTime": "Action", "range": "30 feet", "duration": "Instantaneous", "concentration": false, "ritual": false, "components": "V, S"}, {"name": "Polymorph", "school": "Transmutation", "level": 4, "classes": ["Bard", "Druid", "Sorcerer", "Wizard"], "castTime": "Action", "range": "60 feet", "duration": "Concentration, up to 1 hour", "concentration": true, "ritual": false, "components": "V, S, M (a caterpillar cocoon)"}, {"name": "Power Word Fortify", "school": "Enchantment", "level": 7, "classes": ["Bard", "Cleric"], "castTime": "Action", "range": "60 feet", "duration": "Instantaneous", "concentration": false, "ritual": false, "components": "V"}, {"name": "Power Word Heal", "school": "Enchantment", "level": 9, "classes": ["Bard", "Cleric"], "castTime": "Action", "range": "60 feet", "duration": "Instantaneous", "concentration": false, "ritual": false, "components": "V"}, {"name": "Power Word Kill", "school": "Enchantment", "level": 9, "classes": ["Bard", "Sorcerer", "Warlock", "Wizard"], "castTime": "Action", "range": "60 feet", "duration": "Instantaneous", "concentration": false, "ritual": false, "components": "V"}, {"name": "Power Word Stun", "school": "Enchantment", "level": 8, "classes": ["Bard", "Sorcerer", "Warlock", "Wizard"], "castTime": "Action", "range": "60 feet", "duration": "Instantaneous", "concentration": false, "ritual": false, "components": "V"}, {"name": "Prayer of Healing", "school": "Abjuration", "level": 2, "classes": ["Cleric", "Paladin"], "castTime": "10 minutes", "range": "30 feet", "duration": "Instantaneous", "concentration": false, "ritual": false, "components": "V"}, {"name": "Prestidigitation", "school": "Transmutation", "level": 0, "classes": ["Bard", "Sorcerer", "Warlock", "Wizard"], "castTime": "Action", "range": "10 feet", "duration": "Up to 1 hour", "concentration": false, "ritual": false, "components": "V, S"}, {"name": "Prismatic Spray", "school": "Evocation", "level": 7, "classes": ["Bard", "Sorcerer", "Wizard"], "castTime": "Action", "range": "Self", "duration": "Instantaneous", "concentration": false, "ritual": false, "components": "V, S"}, {"name": "Prismatic Wall", "school": "Abjuration", "level": 9, "classes": ["Bard", "Wizard"], "castTime": "Action", "range": "60 feet", "duration": "10 minutes", "concentration": false, "ritual": false, "components": "V, S"}, {"name": "Produce Flame", "school": "Conjuration", "level": 0, "classes": ["Druid"], "castTime": "Bonus Action", "range": "Self", "duration": "10 minutes", "concentration": false, "ritual": false, "components": "V, S"}, {"name": "Programmed Illusion", "school": "Illusion", "level": 6, "classes": ["Bard", "Wizard"], "castTime": "Action", "range": "120 feet", "duration": "Until dispelled", "concentration": false, "ritual": false, "components": "V, S, M (jade dust worth 25+ GP)"}, {"name": "Project Image", "school": "Illusion", "level": 7, "classes": ["Bard", "Wizard"], "castTime": "Action", "range": "500 miles", "duration": "Concentration, up to 1 day", "concentration": true, "ritual": false, "components": "V, S, M (a statuette of yourself worth 5+ GP)"}, {"name": "Protection from Energy", "school": "Abjuration", "level": 3, "classes": ["Cleric", "Druid", "Ranger", "Sorcerer", "Wizard"], "castTime": "Action", "range": "Touch", "duration": "Concentration, up to 1 hour", "concentration": true, "ritual": false, "components": "V, S"}, {"name": "Protection from Evil and Good", "school": "Abjuration", "level": 1, "classes": ["Cleric", "Druid", "Paladin", "Warlock", "Wizard"], "castTime": "Action", "range": "Touch", "duration": "Concentration up to 10 minutes", "concentration": true, "ritual": false, "components": "V, S, M (a flask of Holy Water worth 25+ GP, which the spell consumes)"}, {"name": "Protection from Poison", "school": "Abjuration", "level": 2, "classes": ["Cleric", "Druid", "Paladin", "Ranger"], "castTime": "Action", "range": "Touch", "duration": "1 hour", "concentration": false, "ritual": false, "components": "V, S"}, {"name": "Purify Food and Drink", "school": "Transmutation", "level": 1, "classes": ["Cleric", "Druid", "Paladin"], "castTime": "Action or Ritual", "range": "10 feet", "duration": "Instantaneous", "concentration": false, "ritual": true, "components": "V, S"}, {"name": "Raise Dead", "school": "Necromancy", "level": 5, "classes": ["Bard", "Cleric", "Paladin"], "castTime": "1 hour", "range": "Touch", "duration": "Instantaneous", "concentration": false, "ritual": false, "components": "V, S, M (a diamond worth 500+ GP, which the spell consumes)"}, {"name": "Rary\u2019s Telepathic Bond", "school": "Divination", "level": 5, "classes": ["Bard", "Wizard"], "castTime": "Action or Ritual", "range": "30 feet", "duration": "1 hour", "concentration": false, "ritual": true, "components": "V, S, M (two eggs)"}, {"name": "Ray of Enfeeblement", "school": "Necromancy", "level": 2, "classes": ["Warlock", "Wizard"], "castTime": "Action", "range": "60 feet", "duration": "Concentration, up to 1 minute", "concentration": true, "ritual": false, "components": "V, S"}, {"name": "Ray of Frost", "school": "Evocation", "level": 0, "classes": ["Sorcerer", "Wizard"], "castTime": "Action", "range": "60 feet", "duration": "Instantaneous", "concentration": false, "ritual": false, "components": "V, S"}, {"name": "Ray of Sickness", "school": "Necromancy", "level": 1, "classes": ["Sorcerer", "Wizard"], "castTime": "Action", "range": "60 feet", "duration": "Instantaneous", "concentration": false, "ritual": false, "components": "V, S"}, {"name": "Regenerate", "school": "Transmutation", "level": 7, "classes": ["Bard", "Cleric", "Druid"], "castTime": "1 minute", "range": "Touch", "duration": "1 hour", "concentration": false, "ritual": false, "components": "V, S, M (a prayer wheel)"}, {"name": "Reincarnate", "school": "Necromancy", "level": 5, "classes": ["Druid"], "castTime": "1 hour", "range": "Touch", "duration": "Instantaneous", "concentration": false, "ritual": false, "components": "V, S, M (rare oils worth 1,000+ GP, which the spell consumes)"}, {"name": "Remove Curse", "school": "Abjuration", "level": 3, "classes": ["Cleric", "Paladin", "Warlock", "Wizard"], "castTime": "Action", "range": "Touch", "duration": "Instantaneous", "concentration": false, "ritual": false, "components": "V, S"}, {"name": "Resistance", "school": "Abjuration", "level": 0, "classes": ["Cleric", "Druid"], "castTime": "Action", "range": "Touch", "duration": "Concentration, up to 1 minute", "concentration": true, "ritual": false, "components": "V, S"}, {"name": "Resurrection", "school": "Necromancy", "level": 7, "classes": ["Bard", "Cleric"], "castTime": "1 hour", "range": "Touch", "duration": "Instantaneous", "concentration": false, "ritual": false, "components": "V, S, M (a diamond worth 1,000+ GP, which the spell consumes)"}, {"name": "Reverse Gravity", "school": "Transmutation", "level": 7, "classes": ["Druid", "Sorcerer", "Wizard"], "castTime": "Action", "range": "100 feet", "duration": "Concentration, up to 1 minute", "concentration": true, "ritual": false, "components": "V, S, M (a lodestone and iron filings)"}, {"name": "Revivify", "school": "Necromancy", "level": 3, "classes": ["Cleric", "Druid", "Paladin", "Ranger"], "castTime": "Action", "range": "Touch", "duration": "Instantaneous", "concentration": false, "ritual": false, "components": "V, S, M (a diamond worth 300+ GP, which the spell consumes)"}, {"name": "Rope Trick", "school": "Transmutation", "level": 2, "classes": ["Wizard"], "castTime": "Action", "range": "Touch", "duration": "1 hour", "concentration": false, "ritual": false, "components": "V, S, M (a segment of rope)"}, {"name": "Sacred Flame", "school": "Evocation", "level": 0, "classes": ["Cleric"], "castTime": "Action", "range": "60 feet", "duration": "Instantaneous", "concentration": false, "ritual": false, "components": "V, S"}, {"name": "Sanctuary", "school": "Abjuration", "level": 1, "classes": ["Cleric"], "castTime": "Bonus Action", "range": "30 feet", "duration": "1 minute", "concentration": false, "ritual": false, "components": "V, S, M (a shard of glass from a mirror)"}, {"name": "Scorching Ray", "school": "Evocation", "level": 2, "classes": ["Sorcerer", "Wizard"], "castTime": "Action", "range": "120 feet", "duration": "Instantaneous", "concentration": false, "ritual": false, "components": "V, S"}, {"name": "Scrying", "school": "Divination", "level": 5, "classes": ["Bard", "Cleric", "Druid", "Warlock", "Wizard"], "castTime": "10 minutes", "range": "Self", "duration": "Concentration, up to 10 minutes", "concentration": true, "ritual": false, "components": "V, S, M (a focus worth 1,000+ GP, such as a crystal ball, mirror, or water-filled font)"}, {"name": "Searing Smite", "school": "Evocation", "level": 1, "classes": ["Paladin"], "castTime": "Bonus Action, which you take immediately after hitting a target with a Melee weapon or an", "range": "Self", "duration": "1 minute", "concentration": false, "ritual": false, "components": "V"}, {"name": "See Invisibility", "school": "Divination", "level": 2, "classes": ["Bard", "Sorcerer", "Wizard"], "castTime": "Action", "range": "Self", "duration": "1 hour", "concentration": false, "ritual": false, "components": "V, S, M (a pinch of talc)"}, {"name": "Seeming", "school": "Illusion", "level": 5, "classes": ["Bard", "Sorcerer", "Wizard"], "castTime": "Action", "range": "30 feet", "duration": "8 hours", "concentration": false, "ritual": false, "components": "V, S"}, {"name": "Sending", "school": "Divination", "level": 3, "classes": ["Bard", "Cleric", "Wizard"], "castTime": "Action", "range": "Unlimited", "duration": "Instantaneous", "concentration": false, "ritual": false, "components": "V, S, M (a copper wire)"}, {"name": "Sequester", "school": "Transmutation", "level": 7, "classes": ["Wizard"], "castTime": "Action", "range": "Touch", "duration": "Until dispelled", "concentration": false, "ritual": false, "components": "V, S, M (gem dust worth 5,000+ GP, which the spell consumes)"}, {"name": "Shapechange", "school": "Transmutation", "level": 9, "classes": ["Druid", "Wizard"], "castTime": "Action", "range": "Self", "duration": "Concentration, up to 1 hour", "concentration": true, "ritual": false, "components": "V, S, M (a jade circlet worth 1,500+ GP)"}, {"name": "Shatter", "school": "Evocation", "level": 2, "classes": ["Bard", "Sorcerer", "Wizard"], "castTime": "Action", "range": "60 feet", "duration": "Instantaneous", "concentration": false, "ritual": false, "components": "V, S, M (a chip of mica)"}, {"name": "Shield", "school": "Abjuration", "level": 1, "classes": ["Sorcerer", "Wizard"], "castTime": "Reaction, which you take when you are hit by an attack roll or targeted by the Magic Missile", "range": "Self", "duration": "1 round", "concentration": false, "ritual": false, "components": "V, S"}, {"name": "Shield of Faith", "school": "Abjuration", "level": 1, "classes": ["Cleric", "Paladin"], "castTime": "Bonus Action", "range": "60 feet", "duration": "Concentration, up to 10 minutes", "concentration": true, "ritual": false, "components": "V, S, M (a prayer scroll)"}, {"name": "Shillelagh", "school": "Transmutation", "level": 0, "classes": ["Druid"], "castTime": "Bonus Action", "range": "Self", "duration": "1 minute", "concentration": false, "ritual": false, "components": "V, S, M (mistletoe)"}, {"name": "Shining Smite", "school": "Transmutation", "level": 2, "classes": ["Paladin"], "castTime": "Bonus Action, which you take immediately after hitting a creature with a Melee weapon or an", "range": "Self", "duration": "Concentration, up to 1 minute", "concentration": true, "ritual": false, "components": "V"}, {"name": "Shocking Grasp", "school": "Evocation", "level": 0, "classes": ["Sorcerer", "Wizard"], "castTime": "Action", "range": "Touch", "duration": "Instantaneous", "concentration": false, "ritual": false, "components": "V, S"}, {"name": "Silence", "school": "Illusion", "level": 2, "classes": ["Bard", "Cleric", "Ranger"], "castTime": "Action or Ritual", "range": "120 feet", "duration": "Concentration, up to 10 minutes", "concentration": true, "ritual": true, "components": "V, S"}, {"name": "Silent Image", "school": "Illusion", "level": 1, "classes": ["Bard", "Sorcerer", "Wizard"], "castTime": "Action", "range": "60 feet", "duration": "Concentration, up to 10 minutes", "concentration": true, "ritual": false, "components": "V, S, M (a bit of fleece)"}, {"name": "Simulacrum", "school": "Illusion", "level": 7, "classes": ["Wizard"], "castTime": "12 hours", "range": "Touch", "duration": "Until dispelled", "concentration": false, "ritual": false, "components": "V, S, M (powdered ruby worth 1,500+ GP, which the spell consumes)"}, {"name": "Sleep", "school": "Enchantment", "level": 1, "classes": ["Bard", "Sorcerer", "Wizard"], "castTime": "Action", "range": "60 feet", "duration": "Concentration, up to 1 minute", "concentration": true, "ritual": false, "components": "V, S, M (a pinch of sand or rose petals)"}, {"name": "Sleet Storm", "school": "Conjuration", "level": 3, "classes": ["Druid", "Sorcerer", "Wizard"], "castTime": "Action", "range": "150 feet", "duration": "Concentration, up to 1 minute", "concentration": true, "ritual": false, "components": "V, S, M (a miniature umbrella)"}, {"name": "Slow", "school": "Transmutation", "level": 3, "classes": ["Bard", "Sorcerer", "Wizard"], "castTime": "Action", "range": "120 feet", "duration": "Concentration, up to 1 minute", "concentration": true, "ritual": false, "components": "V, S, M (a drop of molasses)"}, {"name": "Sorcerous Burst", "school": "Evocation", "level": 0, "classes": ["Sorcerer"], "castTime": "Action", "range": "120 feet", "duration": "Instantaneous", "concentration": false, "ritual": false, "components": "V, S"}, {"name": "Spare the Dying", "school": "Necromancy", "level": 0, "classes": ["Cleric", "Druid"], "castTime": "Action", "range": "15 feet", "duration": "Instantaneous", "concentration": false, "ritual":
