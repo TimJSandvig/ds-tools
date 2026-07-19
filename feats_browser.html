@@ -1,0 +1,566 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>PHB 2024 Feats</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Cinzel:wght@400;600&family=Crimson+Pro:ital,wght@0,400;0,600;1,400&display=swap');
+
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+  :root {
+    --parchment: #f5efe0;
+    --parchment-dark: #e8dcc8;
+    --ink: #2a1a0a;
+    --ink-muted: #5c4030;
+    --red: #8b1a1a;
+    --gold: #9a7b2e;
+    --gold-light: #c9a84c;
+    --blue: #1a3a5c;
+    --green: #1a4a2a;
+    --purple: #3a1a5c;
+    --shadow: rgba(42,26,10,0.15);
+  }
+
+  body {
+    background: #1a0e05;
+    background-image: repeating-linear-gradient(45deg, transparent, transparent 2px, rgba(255,255,255,0.01) 2px, rgba(255,255,255,0.01) 4px);
+    min-height: 100vh;
+    font-family: 'Crimson Pro', Georgia, serif;
+    color: var(--ink);
+    padding: 2rem 1rem;
+  }
+
+  .page {
+    max-width: 900px;
+    margin: 0 auto;
+    background: var(--parchment);
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='300' height='300'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3CfeColorMatrix type='saturate' values='0'/%3E%3C/filter%3E%3Crect width='300' height='300' filter='url(%23n)' opacity='0.04'/%3E%3C/svg%3E");
+    border-radius: 4px;
+    box-shadow: 0 8px 40px rgba(0,0,0,0.6), inset 0 0 80px rgba(154,123,46,0.08);
+    padding: 3rem 3.5rem;
+    border: 1px solid var(--gold);
+    position: relative;
+  }
+
+  .page::before {
+    content: '';
+    position: absolute;
+    inset: 8px;
+    border: 1px solid rgba(154,123,46,0.3);
+    pointer-events: none;
+    border-radius: 2px;
+  }
+
+  h1 {
+    font-family: 'Cinzel', serif;
+    font-size: 2rem;
+    font-weight: 600;
+    color: var(--red);
+    text-align: center;
+    letter-spacing: 0.08em;
+    margin-bottom: 0.25rem;
+  }
+
+  .subtitle {
+    text-align: center;
+    font-style: italic;
+    color: var(--ink-muted);
+    font-size: 1rem;
+    margin-bottom: 2rem;
+  }
+
+  .divider {
+    border: none;
+    height: 2px;
+    background: linear-gradient(to right, transparent, var(--gold), var(--gold-light), var(--gold), transparent);
+    margin: 1.5rem 0;
+  }
+
+  .controls {
+    display: grid;
+    grid-template-columns: 1fr 1fr 1fr;
+    gap: 1rem;
+    margin-bottom: 1.5rem;
+  }
+
+  .control-group label {
+    display: block;
+    font-family: 'Cinzel', serif;
+    font-size: 0.7rem;
+    letter-spacing: 0.1em;
+    color: var(--gold);
+    margin-bottom: 0.4rem;
+    text-transform: uppercase;
+  }
+
+  select, input[type="text"] {
+    width: 100%;
+    padding: 0.5rem 0.75rem;
+    background: var(--parchment-dark);
+    border: 1px solid var(--gold);
+    border-radius: 2px;
+    font-family: 'Crimson Pro', serif;
+    font-size: 1rem;
+    color: var(--ink);
+    appearance: none;
+    -webkit-appearance: none;
+    cursor: pointer;
+    outline: none;
+    transition: border-color 0.2s;
+  }
+
+  select:focus, input[type="text"]:focus {
+    border-color: var(--gold-light);
+    box-shadow: 0 0 0 2px rgba(154,123,46,0.2);
+  }
+
+  .search-wrap { position: relative; }
+  .search-wrap::after {
+    content: '⚔';
+    position: absolute;
+    right: 0.75rem;
+    top: 50%;
+    transform: translateY(-50%);
+    color: var(--gold);
+    font-size: 0.85rem;
+    pointer-events: none;
+  }
+
+  .count {
+    font-style: italic;
+    color: var(--ink-muted);
+    font-size: 0.95rem;
+    margin-bottom: 1rem;
+  }
+
+  .count span { color: var(--red); font-weight: 600; }
+
+  table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 0.95rem;
+  }
+
+  thead tr {
+    border-bottom: 2px solid var(--gold);
+  }
+
+  th {
+    font-family: 'Cinzel', serif;
+    font-size: 0.7rem;
+    letter-spacing: 0.08em;
+    color: var(--red);
+    text-transform: uppercase;
+    padding: 0.6rem 0.75rem;
+    text-align: left;
+    cursor: pointer;
+    user-select: none;
+    white-space: nowrap;
+  }
+
+  th:hover { color: var(--gold); }
+
+  th .sort-arrow {
+    display: inline-block;
+    margin-left: 0.3rem;
+    opacity: 0.4;
+    font-size: 0.6rem;
+  }
+
+  th.sorted .sort-arrow { opacity: 1; color: var(--gold-light); }
+
+  tbody tr {
+    border-bottom: 1px solid rgba(154,123,46,0.2);
+    transition: background 0.15s;
+  }
+
+  tbody tr:nth-child(even) { background: rgba(154,123,46,0.04); }
+  tbody tr:hover { background: rgba(154,123,46,0.1); }
+
+  td {
+    padding: 0.55rem 0.75rem;
+    vertical-align: top;
+  }
+
+  td:first-child {
+    font-weight: 600;
+    color: var(--ink);
+  }
+
+  .badge {
+    display: inline-block;
+    padding: 0.15rem 0.5rem;
+    border-radius: 2px;
+    font-size: 0.78rem;
+    font-family: 'Cinzel', serif;
+    letter-spacing: 0.04em;
+    white-space: nowrap;
+  }
+
+  .badge-origin    { background: rgba(26,58,92,0.12); color: var(--blue); border: 1px solid rgba(26,58,92,0.3); }
+  .badge-general   { background: rgba(26,74,42,0.1); color: var(--green); border: 1px solid rgba(26,74,42,0.3); }
+  .badge-fighting  { background: rgba(139,26,26,0.1); color: var(--red); border: 1px solid rgba(139,26,26,0.3); }
+  .badge-epic      { background: rgba(58,26,92,0.12); color: var(--purple); border: 1px solid rgba(58,26,92,0.3); }
+
+  .asi-tags { display: flex; flex-wrap: wrap; gap: 0.25rem; }
+
+  .asi-tag {
+    display: inline-block;
+    padding: 0.1rem 0.4rem;
+    background: var(--parchment-dark);
+    border: 1px solid rgba(154,123,46,0.4);
+    border-radius: 2px;
+    font-size: 0.78rem;
+    color: var(--ink-muted);
+  }
+
+  .asi-tag.none { color: #aaa; border-color: rgba(0,0,0,0.1); }
+  .asi-tag.any  { background: rgba(154,123,46,0.15); color: var(--gold); border-color: var(--gold); }
+
+  .prereq { color: var(--ink-muted); font-size: 0.88rem; font-style: italic; }
+
+  .empty {
+    text-align: center;
+    padding: 3rem;
+    color: var(--ink-muted);
+    font-style: italic;
+    font-size: 1.1rem;
+  }
+
+  .toggle-btn {
+    padding: 0.5rem 1.25rem;
+    background: transparent;
+    border: 1px solid var(--purple);
+    border-radius: 2px;
+    font-family: 'Cinzel', serif;
+    font-size: 0.7rem;
+    letter-spacing: 0.08em;
+    color: var(--purple);
+    cursor: pointer;
+    text-transform: uppercase;
+    transition: all 0.2s;
+  }
+
+  .toggle-btn:hover { background: var(--purple); color: var(--parchment); }
+  .toggle-btn.active { background: var(--purple); color: var(--parchment); }
+
+  .toggle-btn.origin-btn { border-color: var(--blue); color: var(--blue); }
+  .toggle-btn.origin-btn:hover { background: var(--blue); color: var(--parchment); }
+  .toggle-btn.origin-btn.active { background: var(--blue); color: var(--parchment); }
+
+  .reset-btn {
+    padding: 0.5rem 1rem;
+    background: transparent;
+    border: 1px solid var(--gold);
+    border-radius: 2px;
+    font-family: 'Cinzel', serif;
+    font-size: 0.7rem;
+    letter-spacing: 0.08em;
+    color: var(--gold);
+    cursor: pointer;
+    text-transform: uppercase;
+    transition: all 0.2s;
+    align-self: flex-end;
+  }
+
+  .reset-btn:hover { background: var(--gold); color: var(--parchment); }
+
+  .controls-row {
+    display: flex;
+    align-items: flex-end;
+    gap: 1rem;
+    margin-bottom: 1.5rem;
+  }
+
+  .controls-row .controls { flex: 1; margin-bottom: 0; }
+
+  .mobile-sort { display: none; }
+
+  @media (max-width: 640px) {
+    body { padding: 0.75rem 0.5rem; }
+
+    .page { padding: 1.5rem 1.1rem; }
+
+    h1 { font-size: 1.5rem; }
+    .subtitle { font-size: 0.85rem; margin-bottom: 1.25rem; }
+
+    .controls-row {
+      flex-direction: column;
+      align-items: stretch;
+      gap: 0.85rem;
+    }
+
+    .controls {
+      grid-template-columns: 1fr;
+      gap: 0.85rem;
+    }
+
+    select, input[type="text"] {
+      padding: 0.65rem 0.75rem;
+      font-size: 1rem;
+    }
+
+    .reset-btn, .toggle-btn {
+      width: 100%;
+      padding: 0.65rem 1rem;
+      font-size: 0.75rem;
+    }
+
+    .mobile-sort { display: block; }
+
+    /* Card-style table for narrow screens */
+    table, thead, tbody, th, td, tr { display: block; width: 100%; }
+
+    thead { display: none; }
+
+    tbody tr {
+      margin-bottom: 0.85rem;
+      border: 1px solid rgba(154,123,46,0.35);
+      border-radius: 4px;
+      padding: 0.7rem 0.85rem;
+      background: rgba(154,123,46,0.05);
+    }
+
+    tbody tr:nth-child(even) { background: rgba(154,123,46,0.08); }
+    tbody tr:hover { background: rgba(154,123,46,0.08); }
+
+    td {
+      padding: 0.3rem 0;
+      border-bottom: none;
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-start;
+      gap: 0.6rem;
+    }
+
+    td::before {
+      content: attr(data-label);
+      font-family: 'Cinzel', serif;
+      font-size: 0.62rem;
+      letter-spacing: 0.05em;
+      text-transform: uppercase;
+      color: var(--red);
+      flex-shrink: 0;
+      padding-top: 0.15rem;
+    }
+
+    td:first-child {
+      font-size: 1.1rem;
+      border-bottom: 1px solid rgba(154,123,46,0.25);
+      padding-bottom: 0.5rem;
+      margin-bottom: 0.35rem;
+    }
+
+    td:first-child::before { content: none; }
+
+    td:nth-child(2), td:nth-child(3), td:nth-child(4) { text-align: right; }
+    td:nth-child(4) .asi-tags { justify-content: flex-end; }
+  }
+</style>
+</head>
+<body>
+<div class="page">
+  <h1>PHB 2024 Feats</h1>
+  <p class="subtitle">Player's Handbook — All 75 Feats</p>
+  <hr class="divider">
+
+  <div class="controls-row">
+    <div class="controls">
+      <div class="control-group">
+        <label>Search</label>
+        <div class="search-wrap">
+          <input type="text" id="search" placeholder="Feat name or prerequisite…">
+        </div>
+      </div>
+      <div class="control-group">
+        <label>Feat Type</label>
+        <select id="typeFilter">
+          <option value="">All Types</option>
+          <option value="Origin Feat">Origin</option>
+          <option value="General Feat">General</option>
+          <option value="Fighting Style Feat">Fighting Style</option>
+          <option value="Epic Boon Feat">Epic Boon</option>
+        </select>
+      </div>
+      <div class="control-group">
+        <label>ASI Stat</label>
+        <select id="asiFilter">
+          <option value="">All Stats</option>
+          <option value="None">No ASI</option>
+          <option value="Any">Any Stat</option>
+          <option value="Strength">Strength</option>
+          <option value="Dexterity">Dexterity</option>
+          <option value="Constitution">Constitution</option>
+          <option value="Intelligence">Intelligence</option>
+          <option value="Wisdom">Wisdom</option>
+          <option value="Charisma">Charisma</option>
+        </select>
+      </div>
+    </div>
+    <button class="reset-btn" onclick="reset()">Reset</button>
+  </div>
+
+  <div class="control-group mobile-sort">
+    <label>Sort By</label>
+    <select id="mobileSortSelect">
+      <option value="name">Name</option>
+      <option value="type">Type</option>
+      <option value="prereq">Prerequisite</option>
+    </select>
+  </div>
+
+  <div style="margin-bottom:1rem;display:flex;gap:0.6rem;flex-wrap:wrap;">
+    <button class="toggle-btn" id="boonBtn" onclick="toggleBoons()">Hide Epic Boons</button>
+    <button class="toggle-btn origin-btn" id="originBtn" onclick="toggleOrigin()">Hide Origin Feats</button>
+  </div>
+  <p class="count">Showing <span id="countNum">75</span> of 75 feats</p>
+
+  <table>
+    <thead>
+      <tr>
+        <th onclick="sort('name')" id="th-name">Name <span class="sort-arrow">▲</span></th>
+        <th onclick="sort('type')" id="th-type">Type <span class="sort-arrow">▲</span></th>
+        <th onclick="sort('prereq')" id="th-prereq">Prerequisite <span class="sort-arrow">▲</span></th>
+        <th>ASI</th>
+      </tr>
+    </thead>
+    <tbody id="tbody"></tbody>
+  </table>
+  <div id="empty" class="empty" style="display:none">No feats match the current filters.</div>
+</div>
+
+<script>
+const FEATS = [{"name":"Ability Score Improvement","type":"General Feat","prereq":"Level 4+","asi":["Any"]},{"name":"Actor","type":"General Feat","prereq":"Level 4+, Charisma 13+","asi":["Charisma"]},{"name":"Alert","type":"Origin Feat","prereq":"None","asi":["None"]},{"name":"Archery","type":"Fighting Style Feat","prereq":"Fighting Style Feature","asi":["None"]},{"name":"Athlete","type":"General Feat","prereq":"Level 4+, Strength or Dexterity 13+","asi":["Strength","Dexterity"]},{"name":"Blind Fighting","type":"Fighting Style Feat","prereq":"Fighting Style Feature","asi":["None"]},{"name":"Boon of Combat Prowess","type":"Epic Boon Feat","prereq":"Level 19+","asi":["Any"]},{"name":"Boon of Dimensional Travel","type":"Epic Boon Feat","prereq":"Level 19+","asi":["Any"]},{"name":"Boon of Energy Resistance","type":"Epic Boon Feat","prereq":"Level 19+","asi":["Any"]},{"name":"Boon of Fate","type":"Epic Boon Feat","prereq":"Level 19+","asi":["Any"]},{"name":"Boon of Fortitude","type":"Epic Boon Feat","prereq":"Level 19+","asi":["Any"]},{"name":"Boon of Irresistible Offense","type":"Epic Boon Feat","prereq":"Level 19+","asi":["Strength","Dexterity"]},{"name":"Boon of Recovery","type":"Epic Boon Feat","prereq":"Level 19+","asi":["Any"]},{"name":"Boon of Skill","type":"Epic Boon Feat","prereq":"Level 19+","asi":["Any"]},{"name":"Boon of Speed","type":"Epic Boon Feat","prereq":"Level 19+","asi":["Any"]},{"name":"Boon of Spell Recall","type":"Epic Boon Feat","prereq":"Level 19+, Spellcasting Feature","asi":["Intelligence","Wisdom","Charisma"]},{"name":"Boon of the Night Spirit","type":"Epic Boon Feat","prereq":"Level 19+","asi":["Any"]},{"name":"Boon of Truesight","type":"Epic Boon Feat","prereq":"Level 19+","asi":["Any"]},{"name":"Charger","type":"General Feat","prereq":"Level 4+, Strength or Dexterity 13+","asi":["Strength","Dexterity"]},{"name":"Chef","type":"General Feat","prereq":"Level 4+","asi":["Constitution","Wisdom"]},{"name":"Crafter","type":"Origin Feat","prereq":"None","asi":["None"]},{"name":"Crossbow Expert","type":"General Feat","prereq":"Level 4+, Dexterity 13+","asi":["Dexterity"]},{"name":"Crusher","type":"General Feat","prereq":"Level 4+","asi":["Strength","Constitution"]},{"name":"Defense","type":"Fighting Style Feat","prereq":"Fighting Style Feature","asi":["None"]},{"name":"Defensive Duelist","type":"General Feat","prereq":"Level 4+, Dexterity 13+","asi":["Dexterity"]},{"name":"Dual Wielder","type":"General Feat","prereq":"Level 4+, Strength or Dexterity 13+","asi":["Strength","Dexterity"]},{"name":"Dueling","type":"Fighting Style Feat","prereq":"Fighting Style Feature","asi":["None"]},{"name":"Durable","type":"General Feat","prereq":"Level 4+","asi":["Constitution"]},{"name":"Elemental Adept","type":"General Feat","prereq":"Level 4+, Spellcasting or Pact Magic Feature","asi":["None"]},{"name":"Fey Touched","type":"General Feat","prereq":"Level 4+","asi":["Intelligence","Wisdom","Charisma"]},{"name":"Grappler","type":"General Feat","prereq":"Level 4+, Strength or Dexterity 13+","asi":["Strength","Dexterity"]},{"name":"Great Weapon Fighting","type":"Fighting Style Feat","prereq":"Fighting Style Feature","asi":["None"]},{"name":"Great Weapon Master","type":"General Feat","prereq":"Level 4+, Strength 13+","asi":["Strength"]},{"name":"Healer","type":"Origin Feat","prereq":"None","asi":["None"]},{"name":"Heavily Armored","type":"General Feat","prereq":"Level 4+, Medium Armor Training","asi":["Constitution","Strength"]},{"name":"Heavy Armor Master","type":"General Feat","prereq":"Level 4+, Heavy Armor Training","asi":["Constitution","Strength"]},{"name":"Inspiring Leader","type":"General Feat","prereq":"Level 4+, Wisdom or Charisma 13+","asi":["Wisdom","Charisma"]},{"name":"Interception","type":"Fighting Style Feat","prereq":"Fighting Style Feature","asi":["None"]},{"name":"Keen Mind","type":"General Feat","prereq":"Level 4+, Intelligence 13+","asi":["Intelligence"]},{"name":"Lightly Armored","type":"General Feat","prereq":"Level 4+","asi":["Strength","Dexterity"]},{"name":"Lucky","type":"Origin Feat","prereq":"None","asi":["None"]},{"name":"Mage Slayer","type":"General Feat","prereq":"Level 4+","asi":["Strength","Dexterity"]},{"name":"Magic Initiate","type":"Origin Feat","prereq":"None","asi":["None"]},{"name":"Martial Weapon Training","type":"General Feat","prereq":"Level 4+","asi":["Strength","Dexterity"]},{"name":"Medium Armor Master","type":"General Feat","prereq":"Level 4+, Medium Armor Training","asi":["Strength","Dexterity"]},{"name":"Moderately Armored","type":"General Feat","prereq":"Level 4+, Light Armor Training","asi":["Strength","Dexterity"]},{"name":"Mounted Combatant","type":"General Feat","prereq":"Level 4+","asi":["Strength","Dexterity","Wisdom"]},{"name":"Musician","type":"Origin Feat","prereq":"None","asi":["None"]},{"name":"Observant","type":"General Feat","prereq":"Level 4+, Intelligence or Wisdom 13+","asi":["Intelligence","Wisdom"]},{"name":"Piercer","type":"General Feat","prereq":"Level 4+","asi":["Strength","Dexterity"]},{"name":"Poisoner","type":"General Feat","prereq":"Level 4+","asi":["Dexterity","Intelligence"]},{"name":"Polearm Master","type":"General Feat","prereq":"Level 4+, Strength or Dexterity 13+","asi":["Dexterity","Strength"]},{"name":"Protection","type":"Fighting Style Feat","prereq":"Fighting Style Feature","asi":["None"]},{"name":"Resilient","type":"General Feat","prereq":"Level 4+","asi":["Any"]},{"name":"Ritual Caster","type":"General Feat","prereq":"Level 4+; Intelligence, Wisdom, or Charisma 13+","asi":["Intelligence","Wisdom","Charisma"]},{"name":"Savage Attacker","type":"Origin Feat","prereq":"None","asi":["None"]},{"name":"Sentinel","type":"General Feat","prereq":"Level 4+, Strength or Dexterity 13+","asi":["Strength","Dexterity"]},{"name":"Shadow Touched","type":"General Feat","prereq":"Level 4+","asi":["Intelligence","Wisdom","Charisma"]},{"name":"Sharpshooter","type":"General Feat","prereq":"Level 4+, Dexterity 13+","asi":["Dexterity"]},{"name":"Shield Master","type":"General Feat","prereq":"Level 4+, Shield Training","asi":["Strength"]},{"name":"Skilled","type":"Origin Feat","prereq":"None","asi":["None"]},{"name":"Skill Expert","type":"General Feat","prereq":"Level 4+","asi":["Any"]},{"name":"Skulker","type":"General Feat","prereq":"Level 4+, Dexterity 13+","asi":["Dexterity"]},{"name":"Slasher","type":"General Feat","prereq":"Level 4+","asi":["Strength","Dexterity"]},{"name":"Speedy","type":"General Feat","prereq":"Level 4+, Dexterity or Constitution 13+","asi":["Dexterity","Constitution"]},{"name":"Spell Sniper","type":"General Feat","prereq":"Level 4+, Spellcasting or Pact Magic Feature","asi":["Intelligence","Wisdom","Charisma"]},{"name":"Tavern Brawler","type":"Origin Feat","prereq":"None","asi":["None"]},{"name":"Telekinetic","type":"General Feat","prereq":"Level 4+","asi":["Intelligence","Wisdom","Charisma"]},{"name":"Telepathic","type":"General Feat","prereq":"Level 4+","asi":["Intelligence","Wisdom","Charisma"]},{"name":"Thrown Weapon Fighting","type":"Fighting Style Feat","prereq":"Fighting Style Feature","asi":["None"]},{"name":"Tough","type":"Origin Feat","prereq":"None","asi":["None"]},{"name":"Two-Weapon Fighting","type":"Fighting Style Feat","prereq":"Fighting Style Feature","asi":["None"]},{"name":"Unarmed Fighting","type":"Fighting Style Feat","prereq":"Fighting Style Feature","asi":["None"]},{"name":"War Caster","type":"General Feat","prereq":"Level 4+, Spellcasting or Pact Magic Feature","asi":["Intelligence","Wisdom","Charisma"]},{"name":"Weapon Master","type":"General Feat","prereq":"Level 4+","asi":["Strength","Dexterity"]}];
+
+let sortKey = 'name';
+let sortDir = 1;
+let hideBoons = false;
+let hideOrigin = false;
+
+function toggleBoons() {
+  hideBoons = !hideBoons;
+  const btn = document.getElementById('boonBtn');
+  btn.classList.toggle('active', hideBoons);
+  btn.textContent = hideBoons ? 'Show Epic Boons' : 'Hide Epic Boons';
+  render();
+}
+
+function toggleOrigin() {
+  hideOrigin = !hideOrigin;
+  const btn = document.getElementById('originBtn');
+  btn.classList.toggle('active', hideOrigin);
+  btn.textContent = hideOrigin ? 'Show Origin Feats' : 'Hide Origin Feats';
+  render();
+}
+
+const typeBadge = {
+  'Origin Feat': 'badge-origin',
+  'General Feat': 'badge-general',
+  'Fighting Style Feat': 'badge-fighting',
+  'Epic Boon Feat': 'badge-epic'
+};
+
+const typeLabel = {
+  'Origin Feat': 'Origin',
+  'General Feat': 'General',
+  'Fighting Style Feat': 'Fighting Style',
+  'Epic Boon Feat': 'Epic Boon'
+};
+
+function render() {
+  const search = document.getElementById('search').value.toLowerCase();
+  const typeF = document.getElementById('typeFilter').value;
+  const asiF = document.getElementById('asiFilter').value;
+
+  let filtered = FEATS.filter(f => {
+    if (hideBoons && f.type === 'Epic Boon Feat') return false;
+    if (hideOrigin && f.type === 'Origin Feat') return false;
+    if (search && !f.name.toLowerCase().includes(search) && !f.prereq.toLowerCase().includes(search)) return false;
+    if (typeF && f.type !== typeF) return false;
+    if (asiF) {
+      if (asiF === 'None') return f.asi.includes('None');
+      if (asiF === 'Any') return f.asi.includes('Any') || f.asi.includes('Any x2');
+      return f.asi.includes(asiF) || f.asi.includes('Any') || f.asi.includes('Any x2');
+    }
+    return true;
+  });
+
+  filtered.sort((a, b) => {
+    let av = a[sortKey] || '';
+    let bv = b[sortKey] || '';
+    if (Array.isArray(av)) av = av[0];
+    if (Array.isArray(bv)) bv = bv[0];
+    return av.localeCompare(bv) * sortDir;
+  });
+
+  document.getElementById('countNum').textContent = filtered.length;
+
+  const tbody = document.getElementById('tbody');
+  const empty = document.getElementById('empty');
+
+  if (filtered.length === 0) {
+    tbody.innerHTML = '';
+    empty.style.display = 'block';
+    return;
+  }
+  empty.style.display = 'none';
+
+  tbody.innerHTML = filtered.map(f => {
+    const badge = typeBadge[f.type] || 'badge-general';
+    const label = typeLabel[f.type] || f.type;
+    const asiHtml = f.asi.map(a => {
+      const cls = a === 'None' ? 'none' : (a === 'Any' || a === 'Any x2') ? 'any' : '';
+      return `<span class="asi-tag ${cls}">${a}</span>`;
+    }).join('');
+    const prereq = f.prereq === 'None' ? '<span style="color:#aaa;font-style:italic">—</span>' : `<span class="prereq">${f.prereq}</span>`;
+    return `<tr>
+      <td>${f.name}</td>
+      <td data-label="Type"><span class="badge ${badge}">${label}</span></td>
+      <td data-label="Prereq">${prereq}</td>
+      <td data-label="ASI"><div class="asi-tags">${asiHtml}</div></td>
+    </tr>`;
+  }).join('');
+}
+
+function sort(key) {
+  if (sortKey === key) { sortDir *= -1; } else { sortKey = key; sortDir = 1; }
+  document.querySelectorAll('th').forEach(th => th.classList.remove('sorted'));
+  const th = document.getElementById('th-' + key);
+  if (th) {
+    th.classList.add('sorted');
+    th.querySelector('.sort-arrow').textContent = sortDir === 1 ? '▲' : '▼';
+  }
+  const mobileSelect = document.getElementById('mobileSortSelect');
+  if (mobileSelect) mobileSelect.value = key;
+  render();
+}
+
+document.getElementById('mobileSortSelect').addEventListener('change', (e) => {
+  sort(e.target.value);
+});
+
+function reset() {
+  document.getElementById('search').value = '';
+  document.getElementById('typeFilter').value = '';
+  document.getElementById('asiFilter').value = '';
+  hideBoons = false;
+  const btn = document.getElementById('boonBtn');
+  btn.classList.remove('active');
+  btn.textContent = 'Hide Epic Boons';
+  hideOrigin = false;
+  const originBtn = document.getElementById('originBtn');
+  originBtn.classList.remove('active');
+  originBtn.textContent = 'Hide Origin Feats';
+  render();
+}
+
+document.getElementById('search').addEventListener('input', render);
+document.getElementById('typeFilter').addEventListener('change', render);
+document.getElementById('asiFilter').addEventListener('change', render);
+
+render();
+</script>
+</body>
+</html>
