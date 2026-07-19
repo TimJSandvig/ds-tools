@@ -1,0 +1,595 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>PHB 2024 Weapons &amp; Masteries</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Cinzel:wght@400;600&family=Crimson+Pro:ital,wght@0,400;0,600;1,400&display=swap');
+
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+  :root {
+    --parchment: #f5efe0;
+    --parchment-dark: #e8dcc8;
+    --ink: #2a1a0a;
+    --ink-muted: #5c4030;
+    --red: #8b1a1a;
+    --gold: #9a7b2e;
+    --gold-light: #c9a84c;
+    --blue: #1a3a5c;
+    --body-bg: #1a0e05;
+  }
+
+  body {
+    background: var(--body-bg);
+    background-image: repeating-linear-gradient(45deg,transparent,transparent 2px,rgba(255,255,255,0.01) 2px,rgba(255,255,255,0.01) 4px);
+    min-height: 100vh;
+    font-family: 'Crimson Pro', Georgia, serif;
+    color: var(--ink);
+    padding: 1rem;
+  }
+
+  .page {
+    max-width: 1050px;
+    margin: 0 auto;
+    background: var(--parchment);
+    border-radius: 4px;
+    box-shadow: 0 8px 40px rgba(0,0,0,0.6), inset 0 0 80px rgba(154,123,46,0.08);
+    padding: 2rem 2rem;
+    border: 1px solid var(--gold);
+    position: relative;
+  }
+
+  .page::before {
+    content: '';
+    position: absolute;
+    inset: 8px;
+    border: 1px solid rgba(154,123,46,0.3);
+    pointer-events: none;
+    border-radius: 2px;
+  }
+
+  h1 {
+    font-family: 'Cinzel', serif;
+    font-size: clamp(1.3rem, 4vw, 1.9rem);
+    font-weight: 600;
+    color: var(--red);
+    text-align: center;
+    letter-spacing: 0.08em;
+    margin-bottom: 0.25rem;
+  }
+
+  .subtitle {
+    text-align: center;
+    font-style: italic;
+    color: var(--ink-muted);
+    font-size: 0.95rem;
+    margin-bottom: 1.5rem;
+  }
+
+  .divider {
+    border: none;
+    height: 2px;
+    background: linear-gradient(to right, transparent, var(--gold), var(--gold-light), var(--gold), transparent);
+    margin: 1.25rem 0;
+  }
+
+  h2 {
+    font-family: 'Cinzel', serif;
+    font-size: 1rem;
+    font-weight: 600;
+    color: var(--red);
+    letter-spacing: 0.06em;
+    margin-bottom: 0.75rem;
+    text-align: center;
+  }
+
+  /* ── FILTERS ── */
+  .filters {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 0.6rem;
+    margin-bottom: 1rem;
+  }
+
+  .filter-group {
+    display: flex;
+    flex-direction: column;
+    gap: 0.25rem;
+  }
+
+  .filter-group label {
+    font-family: 'Cinzel', serif;
+    font-size: 0.6rem;
+    text-transform: uppercase;
+    letter-spacing: 0.1em;
+    color: var(--gold);
+  }
+
+  .filter-group select,
+  .filter-group input {
+    padding: 0.4rem 0.6rem;
+    background: var(--parchment-dark);
+    border: 1px solid var(--gold);
+    border-radius: 2px;
+    font-family: 'Crimson Pro', serif;
+    font-size: 0.95rem;
+    color: var(--ink);
+    appearance: none;
+    outline: none;
+    cursor: pointer;
+    width: 100%;
+  }
+
+  .filter-group select:focus,
+  .filter-group input:focus {
+    border-color: var(--gold-light);
+    box-shadow: 0 0 0 2px rgba(154,123,46,0.2);
+  }
+
+  .filter-group.full { grid-column: 1 / -1; }
+
+  .filter-row-bottom {
+    display: flex;
+    gap: 0.5rem;
+    align-items: flex-end;
+    margin-bottom: 1rem;
+  }
+
+  .filter-row-bottom .filter-group { flex: 1; }
+
+  .reset-btn {
+    padding: 0.4rem 0.9rem;
+    background: transparent;
+    border: 1px solid var(--gold);
+    border-radius: 2px;
+    font-family: 'Cinzel', serif;
+    font-size: 0.62rem;
+    letter-spacing: 0.08em;
+    color: var(--gold);
+    cursor: pointer;
+    text-transform: uppercase;
+    white-space: nowrap;
+    align-self: flex-end;
+    transition: all 0.2s;
+    height: fit-content;
+    padding-bottom: 0.45rem;
+  }
+  .reset-btn:hover { background: var(--gold); color: var(--parchment); }
+
+  /* ── TABS ── */
+  .tab-bar {
+    display: flex;
+    gap: 0;
+    border-bottom: 2px solid var(--gold);
+    margin-bottom: 0;
+    overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
+  }
+
+  .tab {
+    padding: 0.5rem 0.85rem;
+    font-family: 'Cinzel', serif;
+    font-size: clamp(0.58rem, 2.2vw, 0.68rem);
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+    color: var(--ink-muted);
+    cursor: pointer;
+    border: 1px solid transparent;
+    border-bottom: none;
+    border-radius: 2px 2px 0 0;
+    white-space: nowrap;
+    background: transparent;
+    transition: all 0.15s;
+    margin-bottom: -2px;
+    user-select: none;
+  }
+  .tab:hover { color: var(--gold); }
+  .tab.active {
+    color: var(--red);
+    background: var(--parchment);
+    border-color: var(--gold);
+    border-bottom-color: var(--parchment);
+    font-weight: 600;
+  }
+
+  /* ── COUNT ── */
+  .count {
+    font-style: italic;
+    color: var(--ink-muted);
+    font-size: 0.85rem;
+    padding: 0.5rem 0 0.4rem;
+  }
+  .count span { color: var(--red); font-weight: 600; }
+
+  /* ── TABLE ── */
+  .table-wrap {
+    overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
+  }
+
+  table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: clamp(0.8rem, 2.5vw, 0.92rem);
+    min-width: 480px;
+  }
+
+  thead tr { border-bottom: 2px solid var(--gold); }
+
+  th {
+    font-family: 'Cinzel', serif;
+    font-size: 0.6rem;
+    letter-spacing: 0.08em;
+    color: var(--red);
+    text-transform: uppercase;
+    padding: 0.5rem 0.5rem;
+    text-align: left;
+    cursor: pointer;
+    user-select: none;
+    white-space: nowrap;
+  }
+  th:hover { color: var(--gold); }
+  th .sa { display: inline-block; margin-left: 0.25rem; opacity: 0.4; font-size: 0.55rem; }
+  th.sorted .sa { opacity: 1; color: var(--gold-light); }
+
+  tbody tr { border-bottom: 1px solid rgba(154,123,46,0.2); transition: background 0.15s; }
+  tbody tr:nth-child(even) { background: rgba(154,123,46,0.04); }
+  tbody tr:hover { background: rgba(154,123,46,0.1); }
+
+  td { padding: 0.4rem 0.5rem; vertical-align: middle; }
+  .name-cell { font-weight: 600; }
+  .num-cell { color: var(--ink-muted); font-size: 0.84rem; white-space: nowrap; }
+  .props-cell { color: var(--ink-muted); font-size: 0.82rem; }
+  .muted { opacity: 0.4; }
+
+  .mastery-badge {
+    display: inline-block;
+    padding: 0.1rem 0.45rem;
+    border-radius: 2px;
+    font-size: 0.72rem;
+    font-family: 'Cinzel', serif;
+    letter-spacing: 0.04em;
+    border: 1px solid;
+    white-space: nowrap;
+    font-weight: 600;
+  }
+
+  .empty-msg {
+    text-align: center;
+    padding: 2.5rem;
+    color: var(--ink-muted);
+    font-style: italic;
+  }
+
+  /* ── MASTERY CARDS ── */
+  .mastery-section { margin-top: 2rem; }
+
+  .mastery-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
+    gap: 0.85rem;
+    margin-top: 0.75rem;
+  }
+
+  .mastery-card {
+    border: 1px solid rgba(154,123,46,0.35);
+    border-radius: 3px;
+    overflow: hidden;
+    background: rgba(154,123,46,0.03);
+  }
+
+  .mastery-card-header {
+    padding: 0.45rem 0.8rem;
+    border-bottom: 1px solid;
+  }
+
+  .mastery-card-name {
+    font-family: 'Cinzel', serif;
+    font-size: 0.8rem;
+    font-weight: 600;
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+  }
+
+  .mastery-card-desc {
+    padding: 0.65rem 0.8rem;
+    font-size: 0.9rem;
+    line-height: 1.5;
+    color: var(--ink-muted);
+  }
+
+  @media (max-width: 520px) {
+    .page { padding: 1.25rem 1rem; }
+    .filters { grid-template-columns: 1fr; }
+    .mastery-grid { grid-template-columns: 1fr; }
+  }
+</style>
+</head>
+<body>
+<div class="page">
+  <h1>Weapons &amp; Mastery</h1>
+  <p class="subtitle">Player's Handbook 2024 — Equipment</p>
+  <hr class="divider">
+
+  <h2>Weapons</h2>
+
+  <div class="filters">
+    <div class="filter-group full">
+      <label>Search</label>
+      <input type="text" id="search" placeholder="Weapon name…" autocomplete="off">
+    </div>
+    <div class="filter-group">
+      <label>Mastery</label>
+      <select id="masteryFilter">
+        <option value="">All Masteries</option>
+        <option>Cleave</option><option>Graze</option><option>Nick</option>
+        <option>Push</option><option>Sap</option><option>Slow</option>
+        <option>Topple</option><option>Vex</option>
+      </select>
+    </div>
+    <div class="filter-group">
+      <label>Damage Type</label>
+      <select id="damageFilter">
+        <option value="">Any Damage</option>
+        <option>Bludgeoning</option><option>Piercing</option><option>Slashing</option>
+      </select>
+    </div>
+  </div>
+
+  <div class="filter-row-bottom">
+    <div class="filter-group">
+      <label>Must Have Property</label>
+      <select id="propInclude">
+        <option value="">Any</option>
+        <option>Ammunition</option><option>Finesse</option><option>Heavy</option>
+        <option>Light</option><option>Loading</option><option>Reach</option>
+        <option>Thrown</option><option>Two-Handed</option><option>Versatile</option>
+      </select>
+    </div>
+    <div class="filter-group">
+      <label>Exclude Property</label>
+      <select id="propExclude">
+        <option value="">None</option>
+        <option>Ammunition</option><option>Finesse</option><option>Heavy</option>
+        <option>Light</option><option>Loading</option><option>Reach</option>
+        <option>Thrown</option><option>Two-Handed</option><option>Versatile</option>
+      </select>
+    </div>
+    <button class="reset-btn" onclick="resetAll()">Reset</button>
+  </div>
+
+  <div class="tab-bar">
+    <button class="tab active" data-tab="all"    onclick="setTab(this)">All</button>
+    <button class="tab"        data-tab="simple" onclick="setTab(this)">Simple</button>
+    <button class="tab"        data-tab="martial" onclick="setTab(this)">Martial</button>
+    <button class="tab"        data-tab="melee"  onclick="setTab(this)">Melee</button>
+    <button class="tab"        data-tab="ranged" onclick="setTab(this)">Ranged</button>
+    <button class="tab"        data-tab="simple-melee"  onclick="setTab(this)">Simple Melee</button>
+    <button class="tab"        data-tab="simple-ranged" onclick="setTab(this)">Simple Ranged</button>
+    <button class="tab"        data-tab="martial-melee"  onclick="setTab(this)">Martial Melee</button>
+    <button class="tab"        data-tab="martial-ranged" onclick="setTab(this)">Martial Ranged</button>
+  </div>
+
+  <p class="count">Showing <span id="countNum">38</span> of 38 weapons</p>
+
+  <div class="table-wrap">
+    <table>
+      <thead>
+        <tr>
+          <th onclick="sortTable('name')"   id="th-name">Name <span class="sa">▲</span></th>
+          <th onclick="sortTable('damage')" id="th-damage">Damage <span class="sa">—</span></th>
+          <th>Properties</th>
+          <th onclick="sortTable('mastery')" id="th-mastery">Mastery <span class="sa">—</span></th>
+          <th onclick="sortTable('weight')" id="th-weight">Weight <span class="sa">—</span></th>
+          <th onclick="sortTable('cost')"   id="th-cost">Cost <span class="sa">—</span></th>
+        </tr>
+      </thead>
+      <tbody id="tbody"></tbody>
+    </table>
+    <div id="emptyMsg" class="empty-msg" style="display:none">No weapons match the current filters.</div>
+  </div>
+
+  <hr class="divider" style="margin-top:1.5rem">
+
+  <div class="mastery-section">
+    <h2>Weapon Mastery Properties</h2>
+    <div class="mastery-grid">
+      <div class="mastery-card">
+        <div class="mastery-card-header" style="color:#7a1a1a;border-color:#7a1a1a;background:rgba(122,26,26,0.12)"><span class="mastery-card-name">Cleave</span></div>
+        <p class="mastery-card-desc">If you hit a creature with a melee attack roll using this weapon, you can make a melee attack roll with the weapon against a second creature within 5 feet of the first that is also within your reach. On a hit, the second creature takes the weapon's damage, but don't add your ability modifier to that damage unless that modifier is negative. You can make this extra attack only once per turn.</p>
+      </div>
+      <div class="mastery-card">
+        <div class="mastery-card-header" style="color:#5c4500;border-color:#5c4500;background:rgba(154,123,46,0.15)"><span class="mastery-card-name">Graze</span></div>
+        <p class="mastery-card-desc">If your attack roll with this weapon misses a creature, you can deal damage to that creature equal to the ability modifier you used to make the attack roll. This damage is the same type dealt by the weapon, and the damage can't be increased in any way, other than increasing the ability modifier.</p>
+      </div>
+      <div class="mastery-card">
+        <div class="mastery-card-header" style="color:#1a4a2a;border-color:#1a4a2a;background:rgba(26,74,42,0.12)"><span class="mastery-card-name">Nick</span></div>
+        <p class="mastery-card-desc">When you make the extra attack of the Light property, you can make it as part of the Attack action instead of as a Bonus Action. You can make this extra attack only once per turn.</p>
+      </div>
+      <div class="mastery-card">
+        <div class="mastery-card-header" style="color:#1a3a5c;border-color:#1a3a5c;background:rgba(26,58,92,0.12)"><span class="mastery-card-name">Push</span></div>
+        <p class="mastery-card-desc">If you hit a creature with this weapon, you can push the creature up to 10 feet straight away from yourself if it is Large or smaller.</p>
+      </div>
+      <div class="mastery-card">
+        <div class="mastery-card-header" style="color:#3a1a5c;border-color:#3a1a5c;background:rgba(58,26,92,0.12)"><span class="mastery-card-name">Sap</span></div>
+        <p class="mastery-card-desc">If you hit a creature with this weapon, that creature has Disadvantage on its next attack roll before the start of your next turn.</p>
+      </div>
+      <div class="mastery-card">
+        <div class="mastery-card-header" style="color:#333;border-color:#333;background:rgba(60,60,60,0.1)"><span class="mastery-card-name">Slow</span></div>
+        <p class="mastery-card-desc">If you hit a creature with this weapon and deal damage to it, you can reduce its Speed by 10 feet until the start of your next turn. If the creature is hit more than once by weapons that have this property, the Speed reduction doesn't exceed 10 feet.</p>
+      </div>
+      <div class="mastery-card">
+        <div class="mastery-card-header" style="color:#1a4a4a;border-color:#1a4a4a;background:rgba(26,74,74,0.12)"><span class="mastery-card-name">Topple</span></div>
+        <p class="mastery-card-desc">If you hit a creature with this weapon, you can force the creature to make a Constitution saving throw (DC 8 plus the ability modifier used to make the attack roll and your Proficiency Bonus). On a failed save, the creature has the Prone condition.</p>
+      </div>
+      <div class="mastery-card">
+        <div class="mastery-card-header" style="color:#5c2000;border-color:#5c2000;background:rgba(140,60,0,0.12)"><span class="mastery-card-name">Vex</span></div>
+        <p class="mastery-card-desc">If you hit a creature with this weapon and deal damage to the creature, you have Advantage on your next attack roll against that creature before the end of your next turn.</p>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script>
+const WEAPONS = [{"category":"Simple Melee Weapons","name":"Club","damage":"1d4 Bludgeoning","properties":"Light","mastery":"Slow","weight":"2 lb.","cost":"1 SP"},{"category":"Simple Melee Weapons","name":"Dagger","damage":"1d4 Piercing","properties":"Finesse,Light,Thrown(Range 20/60)","mastery":"Nick","weight":"1 lb.","cost":"2 GP"},{"category":"Simple Melee Weapons","name":"Greatclub","damage":"1d8 Bludgeoning","properties":"Two-Handed","mastery":"Push","weight":"10 lb.","cost":"2 SP"},{"category":"Simple Melee Weapons","name":"Handaxe","damage":"1d6 Slashing","properties":"Light,Thrown(Range 20/60)","mastery":"Vex","weight":"2 lb.","cost":"5 GP"},{"category":"Simple Melee Weapons","name":"Javelin","damage":"1d6 Piercing","properties":"Thrown(Range 30/120)","mastery":"Slow","weight":"2 lb.","cost":"5 SP"},{"category":"Simple Melee Weapons","name":"Light Hammer","damage":"1d4 Bludgeoning","properties":"Light,Thrown(Range 20/60)","mastery":"Nick","weight":"2 lb.","cost":"2 GP"},{"category":"Simple Melee Weapons","name":"Mace","damage":"1d6 Bludgeoning","properties":"\u2014","mastery":"Sap","weight":"4 lb.","cost":"5 GP"},{"category":"Simple Melee Weapons","name":"Quarterstaff","damage":"1d6 Bludgeoning","properties":"Versatile(1d8)","mastery":"Topple","weight":"4 lb.","cost":"2 SP"},{"category":"Simple Melee Weapons","name":"Sickle","damage":"1d4 Slashing","properties":"Light","mastery":"Nick","weight":"2 lb.","cost":"1 GP"},{"category":"Simple Melee Weapons","name":"Spear","damage":"1d6 Piercing","properties":"Thrown(Range 20/60),Versatile(1d8)","mastery":"Sap","weight":"3 lb.","cost":"1 GP"},{"category":"Simple Ranged Weapons","name":"Dart","damage":"1d4 Piercing","properties":"Finesse,Thrown(Range 20/60)","mastery":"Vex","weight":"1/4 lb.","cost":"5 CP"},{"category":"Simple Ranged Weapons","name":"Light Crossbow","damage":"1d8 Piercing","properties":"Ammunition(Range 80/320; Bolt),Loading,Two-Handed","mastery":"Slow","weight":"5 lb.","cost":"25 GP"},{"category":"Simple Ranged Weapons","name":"Shortbow","damage":"1d6 Piercing","properties":"Ammunition(Range 80/320; Arrow),Two-Handed","mastery":"Vex","weight":"2 lb.","cost":"25 GP"},{"category":"Simple Ranged Weapons","name":"Sling","damage":"1d4 Bludgeoning","properties":"Ammunition(Range 30/120; Bullet)","mastery":"Slow","weight":"\u2014","cost":"1 SP"},{"category":"Martial Melee Weapons","name":"Battleaxe","damage":"1d8 Slashing","properties":"Versatile(1d10)","mastery":"Topple","weight":"4 lb.","cost":"10 GP"},{"category":"Martial Melee Weapons","name":"Flail","damage":"1d8 Bludgeoning","properties":"\u2014","mastery":"Sap","weight":"2 lb.","cost":"10 GP"},{"category":"Martial Melee Weapons","name":"Glaive","damage":"1d10 Slashing","properties":"Heavy,Reach,Two-Handed","mastery":"Graze","weight":"6 lb.","cost":"20 GP"},{"category":"Martial Melee Weapons","name":"Greataxe","damage":"1d12 Slashing","properties":"Heavy,Two-Handed","mastery":"Cleave","weight":"7 lb.","cost":"30 GP"},{"category":"Martial Melee Weapons","name":"Greatsword","damage":"2d6 Slashing","properties":"Heavy,Two-Handed","mastery":"Graze","weight":"6 lb.","cost":"50 GP"},{"category":"Martial Melee Weapons","name":"Halberd","damage":"1d10 Slashing","properties":"Heavy,Reach,Two-Handed","mastery":"Cleave","weight":"6 lb.","cost":"20 GP"},{"category":"Martial Melee Weapons","name":"Lance","damage":"1d10 Piercing","properties":"Heavy,Reach,Two-Handed(unless mounted)","mastery":"Topple","weight":"6 lb.","cost":"10 GP"},{"category":"Martial Melee Weapons","name":"Longsword","damage":"1d8 Slashing","properties":"Versatile(1d10)","mastery":"Sap","weight":"3 lb.","cost":"15 GP"},{"category":"Martial Melee Weapons","name":"Maul","damage":"2d6 Bludgeoning","properties":"Heavy,Two-Handed","mastery":"Topple","weight":"10 lb.","cost":"10 GP"},{"category":"Martial Melee Weapons","name":"Morningstar","damage":"1d8 Piercing","properties":"\u2014","mastery":"Sap","weight":"4 lb.","cost":"15 GP"},{"category":"Martial Melee Weapons","name":"Pike","damage":"1d10 Piercing","properties":"Heavy,Reach,Two-Handed","mastery":"Push","weight":"18 lb.","cost":"5 GP"},{"category":"Martial Melee Weapons","name":"Rapier","damage":"1d8 Piercing","properties":"Finesse","mastery":"Vex","weight":"2 lb.","cost":"25 GP"},{"category":"Martial Melee Weapons","name":"Scimitar","damage":"1d6 Slashing","properties":"Finesse,Light","mastery":"Nick","weight":"3 lb.","cost":"25 GP"},{"category":"Martial Melee Weapons","name":"Shortsword","damage":"1d6 Piercing","properties":"Finesse,Light","mastery":"Vex","weight":"2 lb.","cost":"10 GP"},{"category":"Martial Melee Weapons","name":"Trident","damage":"1d8 Piercing","properties":"Thrown(Range 20/60),Versatile(1d10)","mastery":"Topple","weight":"4 lb.","cost":"5 GP"},{"category":"Martial Melee Weapons","name":"Warhammer","damage":"1d8 Bludgeoning","properties":"Versatile(1d10)","mastery":"Push","weight":"5 lb.","cost":"15 GP"},{"category":"Martial Melee Weapons","name":"War Pick","damage":"1d8 Piercing","properties":"Versatile(1d10)","mastery":"Sap","weight":"2 lb.","cost":"5 GP"},{"category":"Martial Melee Weapons","name":"Whip","damage":"1d4 Slashing","properties":"Finesse,Reach","mastery":"Slow","weight":"3 lb.","cost":"2 GP"},{"category":"Martial Ranged Weapons","name":"Blowgun","damage":"1 Piercing","properties":"Ammunition(Range 25/100; Needle),Loading","mastery":"Vex","weight":"1 lb.","cost":"10 GP"},{"category":"Martial Ranged Weapons","name":"Hand Crossbow","damage":"1d6 Piercing","properties":"Ammunition(Range 30/120; Bolt),Light,Loading","mastery":"Vex","weight":"3 lb.","cost":"75 GP"},{"category":"Martial Ranged Weapons","name":"Heavy Crossbow","damage":"1d10 Piercing","properties":"Ammunition(Range 100/400; Bolt),Heavy,Loading,Two-Handed","mastery":"Push","weight":"18 lb.","cost":"50 GP"},{"category":"Martial Ranged Weapons","name":"Longbow","damage":"1d8 Piercing","properties":"Ammunition(Range 150/600; Arrow),Heavy,Two-Handed","mastery":"Slow","weight":"2 lb.","cost":"50 GP"},{"category":"Martial Ranged Weapons","name":"Musket","damage":"1d12 Piercing","properties":"Ammunition(Range 40/120; Bullet),Loading,Two-Handed","mastery":"Slow","weight":"10 lb.","cost":"500 GP"},{"category":"Martial Ranged Weapons","name":"Pistol","damage":"1d10 Piercing","properties":"Ammunition(Range 30/90; Bullet),Loading","mastery":"Vex","weight":"3 lb.","cost":"250 GP"}];
+
+const MC = {
+  'Cleave': ['#7a1a1a','rgba(122,26,26,0.12)'],
+  'Graze':  ['#5c4500','rgba(154,123,46,0.15)'],
+  'Nick':   ['#1a4a2a','rgba(26,74,42,0.12)'],
+  'Push':   ['#1a3a5c','rgba(26,58,92,0.12)'],
+  'Sap':    ['#3a1a5c','rgba(58,26,92,0.12)'],
+  'Slow':   ['#333','rgba(60,60,60,0.1)'],
+  'Topple': ['#1a4a4a','rgba(26,74,74,0.12)'],
+  'Vex':    ['#5c2000','rgba(140,60,0,0.12)'],
+};
+
+let sortKey = 'name', sortDir = 1, activeTab = 'all';
+
+function getBaseProps(propStr) {
+  if (!propStr || propStr === '—') return [];
+  return propStr.split(',').map(p => p.trim().replace(/\(.*\)/, '').trim());
+}
+
+function tabMatches(w) {
+  const cat = w.category.toLowerCase();
+  switch (activeTab) {
+    case 'all': return true;
+    case 'simple': return cat.includes('simple');
+    case 'martial': return cat.includes('martial');
+    case 'melee': return cat.includes('melee');
+    case 'ranged': return cat.includes('ranged');
+    case 'simple-melee': return cat === 'simple melee weapons';
+    case 'simple-ranged': return cat === 'simple ranged weapons';
+    case 'martial-melee': return cat === 'martial melee weapons';
+    case 'martial-ranged': return cat === 'martial ranged weapons';
+  }
+  return true;
+}
+
+function setTab(el) {
+  document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
+  el.classList.add('active');
+  activeTab = el.dataset.tab;
+  render();
+}
+
+function masteryBadge(m) {
+  if (!m || m === '—') return '—';
+  const [c, bg] = MC[m] || ['#555','rgba(80,80,80,0.1)'];
+  return `<span class="mastery-badge" style="color:${c};background:${bg};border-color:${c}">${m}</span>`;
+}
+
+function propsDisplay(p) {
+  if (!p || p === '—') return '<span class="muted">—</span>';
+  return p.split(',').map(s => s.trim()).join(', ');
+}
+
+function render() {
+  const search   = document.getElementById('search').value.toLowerCase();
+  const mastF    = document.getElementById('masteryFilter').value;
+  const dmgF     = document.getElementById('damageFilter').value;
+  const propInc  = document.getElementById('propInclude').value;
+  const propExc  = document.getElementById('propExclude').value;
+
+  let filtered = WEAPONS.filter(w => {
+    if (!tabMatches(w)) return false;
+    if (search && !w.name.toLowerCase().includes(search)) return false;
+    if (mastF && w.mastery !== mastF) return false;
+    if (dmgF && !w.damage.includes(dmgF)) return false;
+    const bp = getBaseProps(w.properties);
+    if (propInc && !bp.includes(propInc)) return false;
+    if (propExc && bp.includes(propExc)) return false;
+    return true;
+  });
+
+  filtered.sort((a, b) => {
+    const av = a[sortKey] || '', bv = b[sortKey] || '';
+    return av.localeCompare(bv) * sortDir;
+  });
+
+  document.getElementById('countNum').textContent = filtered.length;
+
+  const tbody = document.getElementById('tbody');
+  const emptyMsg = document.getElementById('emptyMsg');
+
+  if (filtered.length === 0) {
+    tbody.innerHTML = '';
+    emptyMsg.style.display = 'block';
+    return;
+  }
+  emptyMsg.style.display = 'none';
+
+  // Group by category
+  const catOrder = ['Simple Melee Weapons','Simple Ranged Weapons','Martial Melee Weapons','Martial Ranged Weapons'];
+  const groups = {};
+  filtered.forEach(w => { (groups[w.category] = groups[w.category] || []).push(w); });
+
+  // Only show category header rows when "all" or mixed tabs are active
+  const showCatHeaders = ['all','simple','martial'].includes(activeTab);
+
+  let html = '';
+  catOrder.forEach(cat => {
+    if (!groups[cat]) return;
+    if (showCatHeaders) {
+      html += `<tr><td colspan="6" style="font-family:'Cinzel',serif;font-size:0.65rem;letter-spacing:0.08em;color:var(--gold);text-transform:uppercase;padding:0.6rem 0.5rem 0.3rem;background:rgba(154,123,46,0.06);border-bottom:1px solid rgba(154,123,46,0.3)">${cat}</td></tr>`;
+    }
+    groups[cat].forEach(w => {
+      html += `<tr>
+        <td class="name-cell">${w.name}</td>
+        <td>${w.damage}</td>
+        <td class="props-cell">${propsDisplay(w.properties)}</td>
+        <td>${masteryBadge(w.mastery)}</td>
+        <td class="num-cell">${w.weight}</td>
+        <td class="num-cell">${w.cost}</td>
+      </tr>`;
+    });
+  });
+
+  tbody.innerHTML = html;
+}
+
+function sortTable(key) {
+  if (sortKey === key) { sortDir *= -1; } else { sortKey = key; sortDir = 1; }
+  document.querySelectorAll('th').forEach(th => {
+    th.classList.remove('sorted');
+    const a = th.querySelector('.sa');
+    if (a) a.textContent = '—';
+  });
+  const th = document.getElementById('th-' + key);
+  if (th) { th.classList.add('sorted'); th.querySelector('.sa').textContent = sortDir === 1 ? '▲' : '▼'; }
+  render();
+}
+
+function resetAll() {
+  document.getElementById('search').value = '';
+  document.getElementById('masteryFilter').value = '';
+  document.getElementById('damageFilter').value = '';
+  document.getElementById('propInclude').value = '';
+  document.getElementById('propExclude').value = '';
+  document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
+  document.querySelector('[data-tab="all"]').classList.add('active');
+  activeTab = 'all';
+  sortKey = 'name'; sortDir = 1;
+  document.querySelectorAll('th').forEach(th => {
+    th.classList.remove('sorted');
+    const a = th.querySelector('.sa'); if (a) a.textContent = '—';
+  });
+  const th = document.getElementById('th-name');
+  if (th) { th.classList.add('sorted'); th.querySelector('.sa').textContent = '▲'; }
+  render();
+}
+
+['search','masteryFilter','damageFilter','propInclude','propExclude'].forEach(id => {
+  const el = document.getElementById(id);
+  el.addEventListener(id === 'search' ? 'input' : 'change', render);
+});
+
+document.getElementById('th-name').classList.add('sorted');
+document.getElementById('th-name').querySelector('.sa').textContent = '▲';
+render();
+</script>
+</body>
+</html>
