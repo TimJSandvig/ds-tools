@@ -50,11 +50,11 @@
 
   h1 {
     font-family: 'Cinzel', serif;
-    font-size: clamp(1.4rem, 5vw, 2rem);
+    font-size: clamp(1.4rem, 6vw, 2rem);
     font-weight: 600;
     color: var(--red);
     text-align: center;
-    letter-spacing: 0.08em;
+    letter-spacing: 0.06em;
     margin-bottom: 0.25rem;
   }
 
@@ -62,7 +62,7 @@
     text-align: center;
     font-style: italic;
     color: var(--ink-muted);
-    font-size: 1rem;
+    font-size: clamp(0.85rem, 3vw, 1rem);
     margin-bottom: 1.5rem;
   }
 
@@ -81,13 +81,14 @@
 
   .tool-link {
     display: block;
-    padding: 0.9rem 1.1rem;
+    padding: 1rem 1.1rem;
     background: rgba(154,123,46,0.06);
     border: 1px solid var(--gold);
     border-radius: 3px;
     text-decoration: none;
     color: var(--ink);
     transition: all 0.15s;
+    -webkit-tap-highlight-color: transparent;
   }
   .tool-link:hover, .tool-link:active {
     background: rgba(154,123,46,0.15);
@@ -96,18 +97,19 @@
 
   .tool-name {
     font-family: 'Cinzel', serif;
-    font-size: 1rem;
+    font-size: clamp(0.95rem, 3.5vw, 1rem);
     font-weight: 600;
     color: var(--red);
     letter-spacing: 0.03em;
     display: block;
-    margin-bottom: 0.2rem;
+    margin-bottom: 0.25rem;
   }
 
   .tool-desc {
-    font-size: 0.88rem;
+    font-size: clamp(0.8rem, 3vw, 0.88rem);
     color: var(--ink-muted);
     font-style: italic;
+    line-height: 1.4;
   }
 
   .footer-note {
@@ -116,6 +118,12 @@
     color: var(--ink-muted);
     font-style: italic;
     margin-top: 2rem;
+  }
+
+  @media (max-width: 480px) {
+    body { padding: 1rem 0.5rem; }
+    .page { padding: 1.5rem 1.1rem; }
+    .divider { margin: 1rem 0; }
   }
 </style>
 </head>
@@ -131,10 +139,15 @@
       <span class="tool-desc">All 389 PHB 2024 spells — searchable, sortable, class cross-reference</span>
     </a>
 
-    <!-- Add more tools below as you upload them, following the same pattern:
     <a class="tool-link" href="weapons_mastery.html">
       <span class="tool-name">Weapons &amp; Mastery</span>
-      <span class="tool-desc">Full weapons table with mastery properties</span>
+      <span class="tool-desc">Full weapons table with mastery properties, mobile tabs and filters</span>
+    </a>
+
+    <!-- Add more tools below as you upload them, following the same pattern:
+    <a class="tool-link" href="new_tool.html">
+      <span class="tool-name">Tool Name</span>
+      <span class="tool-desc">Short description</span>
     </a>
     -->
   </div>
