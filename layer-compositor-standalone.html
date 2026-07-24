@@ -1,0 +1,348 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Layer Compositor</title>
+<style>
+  :root {
+    --bg: #191b20; --bg-panel: #21242b; --bg-raised: #2a2e37;
+    --line: #383d48; --line-soft: #2d313b; --text: #e7e4dc;
+    --text-dim: #9498a3; --text-faint: #666c79;
+    --amber: #d99a4e; --amber-dim: #8a6535; --teal: #5fb3a3;
+    --mono: ui-monospace, "SF Mono", "Cascadia Mono", Consolas, monospace;
+    --sans: -apple-system, "Segoe UI", system-ui, sans-serif;
+  }
+  * { box-sizing: border-box; }
+  html, body { margin: 0; padding: 0; background: var(--bg); color: var(--text); font-family: var(--sans); }
+  .frame { max-width: 1100px; margin: 0 auto; padding: 24px 20px 60px; }
+  .masthead { display: flex; align-items: baseline; justify-content: space-between; border-bottom: 1px solid var(--line); padding-bottom: 14px; margin-bottom: 20px; flex-wrap: wrap; gap: 8px; }
+  .masthead h1 { font-family: var(--mono); font-size: 15px; font-weight: 600; letter-spacing: 0.14em; text-transform: uppercase; color: var(--amber); margin: 0; }
+  .masthead .tag { font-family: var(--mono); font-size: 11px; color: var(--text-faint); }
+  .layout { display: flex; gap: 20px; flex-wrap: wrap; }
+  canvas { max-width: 100%; height: auto; display: block; border: 1px solid var(--line); border-radius: 6px; touch-action: none; background: var(--bg-panel); }
+  .btn-row { display: flex; gap: 10px; margin-top: 14px; flex-wrap: wrap; }
+  .btn { display: inline-flex; align-items: center; gap: 6px; font-family: var(--mono); font-size: 12px; padding: 8px 14px; border-radius: 4px; border: 1px solid var(--line); background: var(--bg-panel); color: var(--text); cursor: pointer; }
+  .btn.primary { border-color: var(--amber); background: var(--amber); color: var(--bg); }
+  .btn:disabled { opacity: 0.5; cursor: not-allowed; }
+  .paste-zone { margin-top: 10px; border: 1px dashed var(--line); border-radius: 4px; padding: 10px 12px; font-family: var(--mono); font-size: 11px; color: var(--text-faint); outline: none; cursor: text; }
+  .side { flex: 1; min-width: 220px; }
+  .field-label { display: block; font-family: var(--mono); font-size: 10.5px; text-transform: uppercase; letter-spacing: 0.08em; color: var(--text-faint); margin-bottom: 8px; }
+  .layer-row { display: flex; align-items: center; gap: 8px; background: var(--bg-panel); border: 1px solid var(--line); border-radius: 4px; padding: 7px 9px; cursor: pointer; font-size: 12px; margin-bottom: 6px; }
+  .layer-row.active { background: var(--bg-raised); border-color: var(--amber-dim); }
+  .layer-row .name { flex: 1; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; color: var(--text); }
+  .layer-row.active .name { color: var(--teal); }
+  .layer-row button { background: transparent; border: none; color: var(--text-dim); cursor: pointer; font-family: var(--mono); font-size: 12px; padding: 2px 5px; }
+  .empty { font-family: var(--mono); font-size: 12px; color: var(--text-faint); padding: 20px 0; }
+  .hint { margin-top: 18px; font-family: var(--mono); font-size: 11px; color: var(--text-faint); line-height: 1.6; }
+</style>
+</head>
+<body>
+<div class="frame">
+  <div class="masthead">
+    <h1>Layer Compositor</h1>
+    <span class="tag">PNG LAYER STACK — DRAG · SCALE · ROTATE</span>
+  </div>
+
+  <div class="layout">
+    <div>
+      <canvas id="canvas" width="900" height="600"></canvas>
+      <div class="btn-row">
+        <label for="fileInput" class="btn primary">Upload PNG</label>
+        <input id="fileInput" type="file" accept="image/*" multiple style="display:none" />
+        <button id="downloadBtn" class="btn" disabled>Download flattened PNG</button>
+      </div>
+      <div id="pasteZone" class="paste-zone" contenteditable="true">Tap &amp; hold here, then Paste (fallback if Upload PNG won't open a picker)</div>
+    </div>
+
+    <div class="side">
+      <label class="field-label">Layers (top → bottom)</label>
+      <div id="layerList"><div class="empty">No layers yet. Upload a PNG to start.</div></div>
+      <div class="hint">
+        <div>• Drag a layer's body to move it</div>
+        <div>• Amber corner handle — drag to scale</div>
+        <div>• Teal top handle — drag to rotate</div>
+        <div>• Click empty canvas to deselect</div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script>
+const CANVAS_W = 900, CANVAS_H = 600, HANDLE_R = 8, ROTATE_OFFSET = 32;
+
+const canvas = document.getElementById("canvas");
+const ctx = canvas.getContext("2d");
+const fileInput = document.getElementById("fileInput");
+const downloadBtn = document.getElementById("downloadBtn");
+const layerListEl = document.getElementById("layerList");
+const pasteZone = document.getElementById("pasteZone");
+
+let layers = [];
+let selectedId = null;
+let idCounter = 0;
+let dragState = null;
+
+function loadImage(file) {
+  return new Promise((resolve, reject) => {
+    const url = URL.createObjectURL(file);
+    const img = new Image();
+    img.onload = () => resolve({ img, url });
+    img.onerror = reject;
+    img.src = url;
+  });
+}
+
+function cornerDist(w, h) { return Math.sqrt((w / 2) ** 2 + (h / 2) ** 2); }
+
+function getHandlePositions(layer) {
+  const w = layer.baseW * layer.scale, h = layer.baseH * layer.scale;
+  const cos = Math.cos(layer.rotation), sin = Math.sin(layer.rotation);
+  const toWorld = (lx, ly) => ({ x: layer.x + lx * cos - ly * sin, y: layer.y + lx * sin + ly * cos });
+  return {
+    corners: [toWorld(-w/2,-h/2), toWorld(w/2,-h/2), toWorld(w/2,h/2), toWorld(-w/2,h/2)],
+    scaleHandle: toWorld(w/2, h/2),
+    rotateHandle: toWorld(0, -h/2 - ROTATE_OFFSET),
+    topCenter: toWorld(0, -h/2),
+  };
+}
+
+function drawChecker() {
+  const size = 16;
+  for (let y = 0; y < CANVAS_H; y += size) {
+    for (let x = 0; x < CANVAS_W; x += size) {
+      const even = (x / size + y / size) % 2 === 0;
+      ctx.fillStyle = even ? "#2a2e37" : "#21242b";
+      ctx.fillRect(x, y, size, size);
+    }
+  }
+}
+
+function draw() {
+  ctx.clearRect(0, 0, CANVAS_W, CANVAS_H);
+  drawChecker();
+  layers.forEach((layer) => {
+    const w = layer.baseW * layer.scale, h = layer.baseH * layer.scale;
+    ctx.save();
+    ctx.translate(layer.x, layer.y);
+    ctx.rotate(layer.rotation);
+    ctx.drawImage(layer.img, -w/2, -h/2, w, h);
+    ctx.restore();
+  });
+
+  const selected = layers.find((l) => l.id === selectedId);
+  if (selected) {
+    const { corners, scaleHandle, rotateHandle, topCenter } = getHandlePositions(selected);
+    ctx.save();
+    ctx.strokeStyle = "#d99a4e";
+    ctx.lineWidth = 1.5;
+    ctx.setLineDash([5, 4]);
+    ctx.beginPath();
+    corners.forEach((c, i) => i === 0 ? ctx.moveTo(c.x, c.y) : ctx.lineTo(c.x, c.y));
+    ctx.closePath();
+    ctx.stroke();
+    ctx.setLineDash([]);
+
+    ctx.beginPath();
+    ctx.moveTo(topCenter.x, topCenter.y);
+    ctx.lineTo(rotateHandle.x, rotateHandle.y);
+    ctx.stroke();
+
+    ctx.fillStyle = "#d99a4e";
+    ctx.beginPath();
+    ctx.arc(scaleHandle.x, scaleHandle.y, HANDLE_R, 0, Math.PI * 2);
+    ctx.fill();
+    ctx.strokeStyle = "#191b20";
+    ctx.lineWidth = 1.5;
+    ctx.stroke();
+
+    ctx.fillStyle = "#5fb3a3";
+    ctx.beginPath();
+    ctx.arc(rotateHandle.x, rotateHandle.y, HANDLE_R, 0, Math.PI * 2);
+    ctx.fill();
+    ctx.strokeStyle = "#191b20";
+    ctx.stroke();
+    ctx.restore();
+  }
+}
+
+function renderLayerList() {
+  downloadBtn.disabled = layers.length === 0;
+  if (layers.length === 0) {
+    layerListEl.innerHTML = '<div class="empty">No layers yet. Upload a PNG to start.</div>';
+    return;
+  }
+  layerListEl.innerHTML = "";
+  [...layers].reverse().forEach((layer) => {
+    const row = document.createElement("div");
+    row.className = "layer-row" + (layer.id === selectedId ? " active" : "");
+    row.innerHTML = `
+      <span class="name">${layer.name}</span>
+      <button data-action="up" title="Move up (forward)">▲</button>
+      <button data-action="down" title="Move down (backward)">▼</button>
+      <button data-action="del" title="Delete">✕</button>
+    `;
+    row.addEventListener("click", () => { selectedId = layer.id; draw(); renderLayerList(); });
+    row.querySelector('[data-action="up"]').addEventListener("click", (e) => { e.stopPropagation(); moveLayer(layer.id, 1); });
+    row.querySelector('[data-action="down"]').addEventListener("click", (e) => { e.stopPropagation(); moveLayer(layer.id, -1); });
+    row.querySelector('[data-action="del"]').addEventListener("click", (e) => { e.stopPropagation(); deleteLayer(layer.id); });
+    layerListEl.appendChild(row);
+  });
+}
+
+function moveLayer(id, dir) {
+  const idx = layers.findIndex((l) => l.id === id);
+  const swapIdx = idx + dir;
+  if (swapIdx < 0 || swapIdx >= layers.length) return;
+  [layers[idx], layers[swapIdx]] = [layers[swapIdx], layers[idx]];
+  draw(); renderLayerList();
+}
+
+function deleteLayer(id) {
+  const layer = layers.find((l) => l.id === id);
+  if (layer && layer.url) URL.revokeObjectURL(layer.url);
+  layers = layers.filter((l) => l.id !== id);
+  if (selectedId === id) selectedId = null;
+  draw(); renderLayerList();
+}
+
+async function handleFiles(fileList) {
+  const files = Array.from(fileList || []).filter((f) => f.type.startsWith("image/"));
+  for (const file of files) {
+    try {
+      const { img, url } = await loadImage(file);
+      const maxDim = Math.min(CANVAS_W, CANVAS_H) * 0.6;
+      const scaleToFit = Math.min(1, maxDim / Math.max(img.naturalWidth, img.naturalHeight));
+      const id = ++idCounter;
+      layers.push({
+        id, img, url,
+        baseW: img.naturalWidth, baseH: img.naturalHeight,
+        x: CANVAS_W / 2, y: CANVAS_H / 2,
+        scale: scaleToFit, rotation: 0, name: file.name,
+      });
+      selectedId = id;
+      draw(); renderLayerList();
+    } catch (err) { console.error("Failed to load image", err); }
+  }
+}
+
+fileInput.addEventListener("change", (e) => { handleFiles(e.target.files); e.target.value = ""; });
+
+pasteZone.addEventListener("paste", (e) => {
+  e.preventDefault();
+  pasteZone.textContent = "Tap & hold here, then Paste (fallback if Upload PNG won't open a picker)";
+  const items = e.clipboardData?.items;
+  if (!items) return;
+  const files = [];
+  for (let i = 0; i < items.length; i++) {
+    const item = items[i];
+    if (item.kind === "file" && item.type.startsWith("image/")) {
+      const file = item.getAsFile();
+      if (file) files.push(file);
+    }
+  }
+  if (files.length) handleFiles(files);
+});
+
+function getCanvasPoint(e) {
+  const rect = canvas.getBoundingClientRect();
+  const scaleX = canvas.width / rect.width, scaleY = canvas.height / rect.height;
+  return { x: (e.clientX - rect.left) * scaleX, y: (e.clientY - rect.top) * scaleY };
+}
+
+function hitTestHandle(layer, pt) {
+  const { scaleHandle, rotateHandle } = getHandlePositions(layer);
+  if (Math.hypot(pt.x - scaleHandle.x, pt.y - scaleHandle.y) <= HANDLE_R + 4) return "scale";
+  if (Math.hypot(pt.x - rotateHandle.x, pt.y - rotateHandle.y) <= HANDLE_R + 4) return "rotate";
+  return null;
+}
+
+function hitTestBody(layer, pt) {
+  const dx = pt.x - layer.x, dy = pt.y - layer.y;
+  const cos = Math.cos(-layer.rotation), sin = Math.sin(-layer.rotation);
+  const localX = dx * cos - dy * sin, localY = dx * sin + dy * cos;
+  const w = layer.baseW * layer.scale, h = layer.baseH * layer.scale;
+  return Math.abs(localX) <= w / 2 && Math.abs(localY) <= h / 2;
+}
+
+canvas.addEventListener("pointerdown", (e) => {
+  e.preventDefault();
+  const pt = getCanvasPoint(e);
+  const selected = layers.find((l) => l.id === selectedId);
+
+  if (selected) {
+    const handle = hitTestHandle(selected, pt);
+    if (handle) {
+      dragState = { mode: handle, id: selected.id, startMouse: pt, cornerDist0: cornerDist(selected.baseW, selected.baseH) };
+      canvas.setPointerCapture(e.pointerId);
+      canvas.style.cursor = "grabbing";
+      return;
+    }
+  }
+  for (let i = layers.length - 1; i >= 0; i--) {
+    if (hitTestBody(layers[i], pt)) {
+      selectedId = layers[i].id;
+      dragState = { mode: "move", id: layers[i].id, startMouse: pt, startX: layers[i].x, startY: layers[i].y };
+      canvas.setPointerCapture(e.pointerId);
+      canvas.style.cursor = "grabbing";
+      draw(); renderLayerList();
+      return;
+    }
+  }
+  selectedId = null;
+  draw(); renderLayerList();
+});
+
+canvas.addEventListener("pointermove", (e) => {
+  if (!dragState) return;
+  e.preventDefault();
+  const pt = getCanvasPoint(e);
+  const layer = layers.find((l) => l.id === dragState.id);
+  if (!layer) return;
+
+  if (dragState.mode === "move") {
+    layer.x = dragState.startX + (pt.x - dragState.startMouse.x);
+    layer.y = dragState.startY + (pt.y - dragState.startMouse.y);
+  } else if (dragState.mode === "scale") {
+    const dist = Math.hypot(pt.x - layer.x, pt.y - layer.y);
+    layer.scale = Math.max(0.05, dist / dragState.cornerDist0);
+  } else if (dragState.mode === "rotate") {
+    layer.rotation = Math.atan2(pt.y - layer.y, pt.x - layer.x) + Math.PI / 2;
+  }
+  draw();
+});
+
+function endDrag() { dragState = null; canvas.style.cursor = "default"; }
+canvas.addEventListener("pointerup", endDrag);
+canvas.addEventListener("pointerleave", endDrag);
+
+downloadBtn.addEventListener("click", () => {
+  const exportCanvas = document.createElement("canvas");
+  exportCanvas.width = CANVAS_W;
+  exportCanvas.height = CANVAS_H;
+  const exportCtx = exportCanvas.getContext("2d");
+  layers.forEach((layer) => {
+    const w = layer.baseW * layer.scale, h = layer.baseH * layer.scale;
+    exportCtx.save();
+    exportCtx.translate(layer.x, layer.y);
+    exportCtx.rotate(layer.rotation);
+    exportCtx.drawImage(layer.img, -w/2, -h/2, w, h);
+    exportCtx.restore();
+  });
+  exportCanvas.toBlob((blob) => {
+    if (!blob) return;
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement("a");
+    a.href = url;
+    a.download = "flattened.png";
+    document.body.appendChild(a);
+    a.click();
+    document.body.removeChild(a);
+    URL.revokeObjectURL(url);
+  }, "image/png");
+});
+
+draw();
+</script>
+</body>
+</html>
