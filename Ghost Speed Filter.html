@@ -1,0 +1,276 @@
+<!doctype html><html><head><meta charset=utf8><meta name=viewport content="width=device-width,initial-scale=1,viewport-fit=cover"><style>:root{color-scheme:light;box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}html{scroll-padding-top:env(safe-area-inset-top,0px)}body{margin:0;padding:0;font:14px -apple-system,BlinkMacSystemFont,sans-serif;background:#faf9f5;color:#141413}img{max-width:100%}[hidden]:not([hidden=until-found i]){display:none!important}</style></head><body>
+<title>Ghost Speed Filter</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500&family=IBM+Plex+Sans:wght@400;500;600&family=Special+Elite&display=swap" rel="stylesheet">
+<style>
+/* Layout: sticky filter bar over a responsive grid of case-file cards. Dark-first, like a van at 3am. */
+:root {
+  --bg: #12161a;
+  --surface: #1a2025;
+  --surface-2: #222a30;
+  --line: #2f3a41;
+  --fg: #dde4e2;
+  --muted: #8d9b9a;
+  --accent: #e3a94b;
+  --accent-ink: #1a1405;
+  --slow: #6fa8dc;
+  --normal: #a3b0ad;
+  --fast: #e8665a;
+  --changes: #e3a94b;
+  --font-display: "Special Elite", "Courier New", monospace;
+  --font-body: "IBM Plex Sans", system-ui, sans-serif;
+  --font-mono: "IBM Plex Mono", ui-monospace, monospace;
+  color-scheme: dark;
+}
+@media (prefers-color-scheme: light) {
+  :root:not([data-theme="dark"]) {
+    --bg: #eef1ee;
+    --surface: #fbfcfb;
+    --surface-2: #e2e8e5;
+    --line: #c7d1cd;
+    --fg: #1b2423;
+    --muted: #55645f;
+    --accent: #8a5a00;
+    --accent-ink: #fff8e8;
+    --slow: #1d5f9e;
+    --normal: #4d5b57;
+    --fast: #b3261e;
+    --changes: #8a5a00;
+    color-scheme: light;
+  }
+}
+:root[data-theme="light"] {
+  --bg: #eef1ee;
+  --surface: #fbfcfb;
+  --surface-2: #e2e8e5;
+  --line: #c7d1cd;
+  --fg: #1b2423;
+  --muted: #55645f;
+  --accent: #8a5a00;
+  --accent-ink: #fff8e8;
+  --slow: #1d5f9e;
+  --normal: #4d5b57;
+  --fast: #b3261e;
+  --changes: #8a5a00;
+  color-scheme: light;
+}
+
+* { box-sizing: border-box; }
+body {
+  background: var(--bg);
+  color: var(--fg);
+  font-family: var(--font-body);
+  font-size: 15px;
+  line-height: 1.5;
+}
+.wrap { max-width: 1100px; margin-inline: auto; padding-inline: 16px; }
+header.top { padding-block: 28px 16px; }
+h1 {
+  font-family: var(--font-display);
+  font-weight: 400;
+  font-size: clamp(1.7rem, 5vw, 2.4rem);
+  line-height: 1.1;
+  margin: 0 0 6px;
+  text-wrap: balance;
+}
+.sub { margin: 0; color: var(--muted); max-width: 62ch; }
+
+.bar {
+  position: sticky;
+  top: env(safe-area-inset-top, 0px);
+  z-index: 5;
+  background: var(--bg);
+  border-block: 1px solid var(--line);
+  padding-block: 12px;
+}
+.bar .wrap { display: flex; flex-wrap: wrap; align-items: center; gap: 10px 14px; }
+.bar .label { font-size: 12px; letter-spacing: .08em; text-transform: uppercase; color: var(--muted); }
+.chips { display: flex; flex-wrap: wrap; gap: 8px; }
+.chip {
+  font: 500 14px var(--font-body);
+  color: var(--fg);
+  background: var(--surface);
+  border: 1px solid var(--line);
+  border-radius: 999px;
+  padding: 7px 14px;
+  cursor: pointer;
+  display: inline-flex; align-items: center; gap: 8px;
+}
+.chip::before { content: ""; width: 9px; height: 9px; border-radius: 50%; background: var(--c); }
+.chip[aria-pressed="true"] { background: var(--c); color: var(--bg); border-color: var(--c); }
+.chip[aria-pressed="true"]::before { background: var(--bg); }
+.chip[data-k="slow"] { --c: var(--slow); }
+.chip[data-k="normal"] { --c: var(--normal); }
+.chip[data-k="fast"] { --c: var(--fast); }
+.chip[data-k="changes"] { --c: var(--changes); }
+.spacer { flex: 1 1 0; }
+.count { font-family: var(--font-mono); font-size: 13px; color: var(--muted); font-variant-numeric: tabular-nums; }
+.count b { color: var(--fg); font-weight: 500; }
+.link {
+  font: 500 13px var(--font-body); color: var(--accent); background: none; border: 0; padding: 4px 2px; cursor: pointer; text-decoration: underline; text-underline-offset: 3px;
+}
+button:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
+
+.notes {
+  margin-block: 18px 6px;
+  display: grid; gap: 8px 24px;
+  grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+  color: var(--muted); font-size: 13.5px;
+}
+.notes p { margin: 0; min-width: 0; }
+.notes b { color: var(--fg); font-weight: 600; }
+
+.grid {
+  display: grid; gap: 12px;
+  grid-template-columns: repeat(auto-fill, minmax(290px, 1fr));
+  padding-block: 12px 48px;
+}
+.card {
+  min-width: 0;
+  background: var(--surface);
+  border: 1px solid var(--line);
+  border-radius: 6px;
+  padding: 14px 14px 12px;
+  display: flex; flex-direction: column; gap: 10px;
+}
+.card.out { opacity: .42; }
+.card.out h2 { text-decoration: line-through; }
+.card-head { display: flex; justify-content: space-between; align-items: flex-start; gap: 10px; }
+h2 { font-family: var(--font-display); font-weight: 400; font-size: 1.25rem; line-height: 1.2; margin: 0; }
+.tags { display: flex; flex-wrap: wrap; gap: 6px; }
+.tag {
+  font: 500 11px var(--font-body); letter-spacing: .06em; text-transform: uppercase;
+  color: var(--c); border: 1px solid var(--c); border-radius: 3px; padding: 1px 6px;
+}
+.tag.slow { --c: var(--slow); } .tag.normal { --c: var(--normal); }
+.tag.fast { --c: var(--fast); } .tag.changes { --c: var(--changes); }
+.speed { font-family: var(--font-mono); font-size: 13px; color: var(--fg); background: var(--surface-2); border-radius: 4px; padding: 6px 9px; font-variant-numeric: tabular-nums; }
+.test { margin: 0; font-size: 14px; }
+.noev { border-top: 1px dashed var(--line); padding-top: 8px; }
+.test span { font-size: 11px; letter-spacing: .08em; text-transform: uppercase; color: var(--muted); display: block; margin-bottom: 2px; }
+.rule {
+  align-self: flex-start; margin-top: auto;
+  font: 500 12.5px var(--font-body); color: var(--muted);
+  background: none; border: 1px solid var(--line); border-radius: 4px; padding: 4px 10px; cursor: pointer;
+}
+.rule:hover { color: var(--fg); border-color: var(--muted); }
+.empty { grid-column: 1 / -1; color: var(--muted); padding: 24px 0; }
+@media (prefers-reduced-motion: no-preference) { .card, .chip { transition: opacity .15s, background-color .15s; } }
+</style>
+
+<header class="top">
+  <div class="wrap">
+    <h1>Ghost Speed Filter</h1>
+    <p class="sub">Pick the speeds you saw during a hunt. Each ghost shows under every speed it can be seen at, with a quick test and a way to rule it out when you have no evidence.</p>
+  </div>
+</header>
+
+<div class="bar">
+  <div class="wrap">
+    <span class="label">Seen at</span>
+    <div class="chips" id="chips" role="group" aria-label="Speed filters">
+      <button class="chip" data-k="slow" aria-pressed="false">Slow</button>
+      <button class="chip" data-k="normal" aria-pressed="false">Normal</button>
+      <button class="chip" data-k="fast" aria-pressed="false">Fast</button>
+      <button class="chip" data-k="changes" aria-pressed="false">Changes</button>
+    </div>
+    <span class="spacer"></span>
+    <span class="count" id="count" aria-live="polite"></span>
+    <button class="link" id="reset" type="button">Reset</button>
+  </div>
+</div>
+
+<main class="wrap">
+  <div class="notes">
+    <p><b>Line of sight speeds everything up.</b> Any ghost chasing you in view accelerates from 1.7 toward about 2.8 m/s over roughly 13 s. Judge speed while it is searching.</p>
+    <p><b>Blood Moon adds 15%</b> to every ghost, every condition. Shift your reading down before filtering.</p>
+    <p><b>Selecting several chips</b> shows ghosts matching any of them. Tap Rule out on a card to grey a ghost out.</p>
+  </div>
+  <div class="grid" id="grid"></div>
+</main>
+
+<script>
+const GHOSTS = [
+  // tags: every speed the ghost can be seen at. First tag is its main behaviour.
+  { n: "Spirit", t: ["normal"], s: "1.7 m/s flat", x: "No speed trick. Normal speed means it stays on the list, nothing more." , r: "Smudge it during a hunt and time 3 minutes. If it hunts again before then, it is not a Spirit." },
+  { n: "Wraith", t: ["normal"], s: "1.7 m/s flat", x: "No speed trick. Rule in by evidence or behaviour, not speed." , r: "Lay salt in the ghost room doorway. A Wraith never steps in it, so footprints in the salt rule it out." },
+  { n: "Phantom", t: ["normal"], s: "1.7 m/s flat", x: "No speed trick. Rule in by evidence or behaviour, not speed." , r: "Photograph it during a ghost event. A Phantom vanishes from the photo. It also flickers rarely in hunts; heavy flickering rules it out." },
+  { n: "Poltergeist", t: ["normal"], s: "1.7 m/s flat", x: "No speed trick. Rule in by evidence or behaviour, not speed." , r: "Pile objects in the ghost room. A Poltergeist throws several at once. Single throws only means it is not one." },
+  { n: "Banshee", t: ["normal"], s: "1.7 m/s flat", x: "No speed trick. Rule in by evidence or behaviour, not speed." , r: "Parabolic mic near the ghost room for its unique wail. It fixates on one player; no favourite target rules it out." },
+  { n: "Mare", t: ["normal"], s: "1.7 m/s flat", x: "No speed trick. Rule in by evidence or behaviour, not speed." , r: "Switch the ghost-room light on. A Mare turns lights off far more than on, and hunts earlier in the dark. Lights flipping on often rules it out." },
+  { n: "Shade", t: ["normal"], s: "1.7 m/s flat", x: "No speed trick. Rule in by evidence or behaviour, not speed." , r: "Stay in the ghost room. A Shade goes quiet around you and only hunts at low sanity (35% or below). An early hunt rules it out." },
+  { n: "Demon", t: ["normal"], s: "1.7 m/s flat", x: "No speed trick. Rule in by evidence or behaviour, not speed." , r: "Hunts back to back, as little as 20 s apart, and at high sanity. Smudge recovery is only about 1 min. Slow, late hunts rule it out." },
+  { n: "Yurei", t: ["normal"], s: "1.7 m/s flat", x: "No speed trick. Rule in by evidence or behaviour, not speed." , r: "Smudge it in the ghost room. A Yurei stays trapped there for about 90 s. If it roams straight off, it is not a Yurei." },
+  { n: "Oni", t: ["normal"], s: "1.7 m/s flat", x: "No speed trick. Rule in by evidence or behaviour, not speed." , r: "Watch it in hunts. An Oni barely flickers and is visible most of the time. Heavy flickering rules it out." },
+  { n: "Yokai", t: ["normal"], s: "1.7 m/s flat", x: "No speed trick. Rule in by evidence or behaviour, not speed." , r: "Talk loudly in the ghost room. A Yokai hunts early (80% sanity) and hears you only up close during hunts. No early hunt rules it out." },
+  { n: "Goryo", t: ["normal"], s: "1.7 m/s flat", x: "No speed trick. Rule in by evidence or behaviour, not speed." , r: "Rarely leaves its room. Check DOTS on a video camera: a Goryo only shows on camera, never in person. Wandering rules it out." },
+  { n: "Myling", t: ["normal"], s: "1.7 m/s flat", x: "No speed trick. Rule in by evidence or behaviour, not speed." , r: "Footsteps and sounds are quiet during hunts and only carry up close. Loud footsteps from afar rule it out." },
+  { n: "Onryo", t: ["normal"], s: "1.7 m/s flat", x: "No speed trick. Rule in by evidence or behaviour, not speed." , r: "Light candles in the ghost room. Blowing out 3 flames triggers a hunt at any sanity. No hunt from flames rules it out." },
+  { n: "Obake", t: ["normal"], s: "1.7 m/s flat", x: "No speed trick. Rule in by evidence or behaviour, not speed." , r: "Leaves few fingerprints and changes shape mid-hunt. Reliable prints and a constant model rule it out." },
+
+  { n: "Jinn", t: ["fast", "normal"], s: "2.5 m/s fixed, otherwise 1.7", x: "Breaker ON, ghost has line of sight, you are 3 m+ away: it holds 2.5 m/s. Turn the breaker OFF and it drops to normal." , r: "Run the speed test with the breaker ON, then OFF. It never turns the breaker off itself. No speed jump with the breaker on rules it out." },
+  { n: "Raiju", t: ["fast", "normal"], s: "2.5 m/s near electronics, otherwise 1.7", x: "Carry or place powered equipment near the hunt path and watch it speed up. Move the gear away and it returns to 1.7." , r: "Carry powered gear into a hunt. A Raiju speeds up near it and disrupts it from further away. No change near electronics rules it out." },
+
+  { n: "Revenant", t: ["slow", "fast"], s: "1.0 m/s searching, 3.0 m/s once it detects you", x: "Hide with no sight, sound or gear in range and it crawls. The moment it sees or hears you it sprints. Lose it and it slows again." , r: "Hide in a closet or out of sight during a hunt. A Revenant crawls until it sees or hears you. A ghost that never crawls is not a Revenant." },
+  { n: "Deogen", t: ["slow", "fast"], s: "3.0 m/s at 6 m+, 0.4 m/s inside 2.5 m", x: "It always knows where you are. Hide and let it come: fast on approach, then a crawl when it is right on top of you." , r: "Always finds you. Fast from far away, a crawl up close. A Deogen's spirit box response is heavy breathing. Walking away from it works." },
+  { n: "Thaye", t: ["changes", "fast", "slow"], s: "2.75 m/s young, down 0.175 per age step to 1.0", x: "Compare hunts over a long contract. Early hunts are fast, later ones get steadily slower as it ages." , r: "Older means slower and calmer. Compare hunts early and late. Constant speed over a long contract rules it out." },
+  { n: "Moroi", t: ["changes", "fast"], s: "1.5 m/s rising to 2.25 at ~0% sanity, 3.71 with line of sight", x: "Compare a hunt at high team sanity with one at very low sanity. It gets faster as sanity falls." , r: "Speed climbs as team sanity falls and a smudge lasts 7 s on it instead of 5. Flat speed at low sanity rules it out." },
+  { n: "Dayan", t: ["changes", "slow", "fast"], s: "1.2 m/s if you stand still, 2.25 if you move (within 10 m)", x: "When it is within 10 m, freeze for a few seconds, then move. Slow when you are still, quick when you walk." , r: "Stand still near the ghost, then move. A Dayan weakens when you are still and is quick when you move. Same speed either way rules it out." },
+  { n: "Gallu", t: ["changes"], s: "1.36 weakened, 1.7 normal, 1.96 enraged", x: "Hard to eyeball. Look for speed shifts between hunts after using protective gear on it." , r: "Use smudge and crucifix on it and track results. It cycles normal, enraged and weakened, and cannot cross salt while enraged." },
+  { n: "Hantu", t: ["changes", "slow", "fast"], s: "1.4 m/s in warm rooms, up to 2.7 m/s in freezing rooms", x: "Compare a chase through a warm room with one through a freezing room. Cold means fast, warm means slow." , r: "Turn the breaker OFF. A Hantu shows freezing breath only in cold rooms and speeds up there. No link between temperature and speed rules it out." },
+  { n: "Obambo", t: ["changes", "normal"], s: "1.7 m/s calm, faster when aggressive", x: "It flips between calm and aggressive about every 2 minutes, even mid-hunt. Time two hunts a couple of minutes apart." , r: "Alternates calm (hunts only near 10% sanity) and aggressive (hunts near 65%) about every 2 minutes. Same hunt behaviour across minutes rules it out." },
+  { n: "The Twins", t: ["changes"], s: "1.5 m/s main twin, 1.9 m/s decoy", x: "Look for two different hunt speeds across hunts. Which twin hunts is random." , r: "Two ghost events at the same moment in different rooms. Hunts at two different speeds across a contract." },
+  { n: "The Mimic", t: ["changes"], s: "Copies another ghost's speed, switching every 30 s to 2 min", x: "Speed will not stay consistent with any one ghost. A mismatch between hunts is the clue.", r: "Always shows fake Ghost Orbs on top of its real behaviour, and copies a different ghost each time. Orbs plus inconsistent behaviour points to it." },
+  { n: "Aswang", t: ["slow", "fast"], s: "1.53 m/s base, up to 2.53 m/s, speeds up faster than most", x: "Watch it before it sees you: slower than 1.7 but faster than a Revenant. Break line of sight within about 17 s or it ramps hard.", r: "Draw it to a closet or locker with incense. An Aswang cannot kill you in an official hiding spot, but it marks you for the next hunt." },
+  { n: "Kormos", t: ["changes", "normal", "fast"], s: "1.7 m/s within 5 m, 2.21 m/s beyond 5 m", x: "It closes distance quickly from afar, then slows when near. It cannot see you, so line of sight does not matter. Stay silent and away from electronics.", r: "Blind in hunts and tracks sound only. Hunts at 50% sanity, 70% if you sprint in the room, and kills through walls within 1.5 m. Seeing you across a room rules it out." },
+];
+
+const KEY = "ghost-speed-v1";
+let state = { sel: [], out: [] };
+try { const s = JSON.parse(localStorage.getItem(KEY) || "null"); if (s && Array.isArray(s.sel) && Array.isArray(s.out)) state = s; } catch (e) {}
+function save() { try { localStorage.setItem(KEY, JSON.stringify(state)); } catch (e) {} }
+
+const grid = document.getElementById("grid");
+const countEl = document.getElementById("count");
+const chips = [...document.querySelectorAll(".chip")];
+const LABEL = { slow: "Slow", normal: "Normal", fast: "Fast", changes: "Changes" };
+
+function esc(s) { return s.replace(/[&<>"]/g, c => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;" }[c])); }
+
+function render() {
+  chips.forEach(c => c.setAttribute("aria-pressed", state.sel.includes(c.dataset.k)));
+  let list = GHOSTS.filter(g => !state.sel.length || g.t.some(t => state.sel.includes(t)));
+  const live = list.filter(g => !state.out.includes(g.n));
+  list = [...live, ...list.filter(g => state.out.includes(g.n))];
+  countEl.innerHTML = "<b>" + live.length + "</b> of " + GHOSTS.length + " remain";
+  if (!list.length) { grid.innerHTML = '<p class="empty">No ghosts match. Clear a filter.</p>'; return; }
+  grid.innerHTML = list.map(g => {
+    const out = state.out.includes(g.n);
+    return '<article class="card' + (out ? " out" : "") + '">' +
+      '<div class="card-head"><h2>' + esc(g.n) + '</h2></div>' +
+      '<div class="tags">' + g.t.map(t => '<span class="tag ' + t + '">' + LABEL[t] + '</span>').join("") + '</div>' +
+      '<div class="speed">' + esc(g.s) + '</div>' +
+      '<p class="test"><span>Ghost test</span>' + esc(g.x) + '</p>' +
+      '<p class="test noev"><span>No evidence: rule out</span>' + esc(g.r) + '</p>' +
+      '<button class="rule" type="button" data-n="' + esc(g.n) + '">' + (out ? "Put back" : "Rule out") + '</button>' +
+      '</article>';
+  }).join("");
+}
+
+chips.forEach(c => c.addEventListener("click", () => {
+  const k = c.dataset.k;
+  state.sel = state.sel.includes(k) ? state.sel.filter(x => x !== k) : [...state.sel, k];
+  save(); render();
+}));
+grid.addEventListener("click", e => {
+  const b = e.target.closest(".rule"); if (!b) return;
+  const n = b.dataset.n;
+  state.out = state.out.includes(n) ? state.out.filter(x => x !== n) : [...state.out, n];
+  save(); render();
+});
+document.getElementById("reset").addEventListener("click", () => { state = { sel: [], out: [] }; save(); render(); });
+render();
+</script>
+
+</body></html>
